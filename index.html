@@ -17,7 +17,7 @@
       user-select: none;
     }
 
-    /* ================= 1. NAVBAR ================= */
+    /* 1. NAVBAR */
     header {
       height: 56px;
       display: flex;
@@ -30,25 +30,13 @@
       flex-shrink: 0;
     }
 
-    .header-left { display: flex; align-items: center; gap: 16px; }
-    
     .brand-logo {
       display: flex; align-items: center; gap: 8px;
-      font-weight: bold; font-size: 19px; color: #fff; text-decoration: none;
+      font-weight: bold; font-size: 19px; color: #fff; cursor: pointer;
     }
     .brand-icon {
       background-color: #ff0000; color: white;
       padding: 4px 8px; border-radius: 8px; display: flex; align-items: center;
-    }
-
-    .header-center { display: flex; align-items: center; width: 40%; max-width: 480px; }
-    .search-box {
-      width: 100%; padding: 8px 16px; border-radius: 20px 0 0 20px;
-      border: 1px solid #303030; background: #121212; color: white; outline: none;
-    }
-    .search-btn {
-      padding: 8px 18px; border-radius: 0 20px 20px 0;
-      border: 1px solid #303030; border-left: none; background: #222; color: white; cursor: pointer;
     }
 
     .header-right { display: flex; align-items: center; gap: 12px; }
@@ -67,7 +55,7 @@
       background-color: #00bcd4; color: #000; align-items: center; justify-content: center; font-weight: bold;
     }
 
-    /* ================= 2. LAYOUT ================= */
+    /* 2. LAYOUT */
     .main-layout {
       display: flex;
       flex: 1;
@@ -75,35 +63,76 @@
       overflow: hidden;
     }
 
-    /* Sidebar Bersih Hanya Home (Ikon Vektor Buatan Sendiri) */
+    /* SIDEBAR KIRI: HANYA ICON MAIN & SHORTS (VEKTOR SVG) */
     .sidebar {
-      width: 72px;
+      width: 76px;
       background-color: #0f0f0f;
       display: flex;
       flex-direction: column;
       align-items: center;
       padding-top: 16px;
+      gap: 20px;
       flex-shrink: 0;
       border-right: 1px solid #1a1a1a;
     }
     .side-item {
       display: flex; flex-direction: column; align-items: center;
-      gap: 6px; font-size: 11px; color: #fff; cursor: pointer;
+      gap: 6px; font-size: 11px; color: #aaa; cursor: pointer; width: 100%; padding: 8px 0;
     }
-    .side-icon-svg {
-      width: 24px; height: 24px; fill: #ffffff;
-    }
+    .side-item:hover, .side-item.active { color: #fff; font-weight: bold; }
+    .side-item.active svg { fill: #ff0000; }
+    .side-icon-svg { width: 24px; height: 24px; fill: #ffffff; }
 
-    /* Feed Shorts: Satu Layar Penuh Murni Format Shorts */
-    .shorts-feed-wrapper {
+    /* ================= HALAMAN MAIN ================= */
+    #page-main {
+      flex: 1;
+      height: 100%;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      text-align: center;
+      padding: 20px;
+    }
+    .main-title {
+      font-size: 36px;
+      font-weight: bold;
+      margin-bottom: 25px;
+      color: #ffffff;
+    }
+    .main-buttons-group {
+      display: flex;
+      gap: 16px;
+      flex-wrap: wrap;
+      justify-content: center;
+    }
+    .btn-main-action {
+      padding: 14px 28px;
+      font-size: 16px;
+      font-weight: bold;
+      border-radius: 25px;
+      border: none;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      transition: 0.2s;
+    }
+    .btn-main-play { background-color: #ff0000; color: white; }
+    .btn-main-play:hover { background-color: #cc0000; transform: scale(1.05); }
+    .btn-main-add { background-color: #272727; color: white; }
+    .btn-main-add:hover { background-color: #3f3f3f; transform: scale(1.05); }
+
+    /* ================= HALAMAN SHORTS ================= */
+    #page-shorts {
+      display: none; /* Awalnya sembunyi */
       flex: 1;
       height: 100%;
       overflow-y: scroll;
       scroll-snap-type: y mandatory;
       scrollbar-width: none;
-      display: block;
     }
-    .shorts-feed-wrapper::-webkit-scrollbar { display: none; }
+    #page-shorts::-webkit-scrollbar { display: none; }
 
     .short-container {
       width: 100%;
@@ -116,7 +145,6 @@
       position: relative;
     }
 
-    /* Bingkai Format 9:16 Khas Shorts */
     .video-frame {
       height: 88vh;
       max-height: 720px;
@@ -127,10 +155,9 @@
       position: relative;
       box-shadow: 0 4px 25px rgba(0,0,0,0.8);
     }
-
     iframe { width: 100%; height: 100%; border: none; }
 
-    /* Info Channel & Subscribe */
+    /* Overlay Channel & Subscribe */
     .channel-overlay {
       position: absolute;
       bottom: 20px; left: 15px; right: 15px;
@@ -142,7 +169,7 @@
       display: flex; align-items: center; gap: 10px; margin-bottom: 8px; pointer-events: auto;
     }
     .channel-pic {
-      width: 36px; height: 36px; border-radius: 50%; background: #e91e63;
+      width: 36px; height: 36px; border-radius: 50%; background: #ff5722;
       display: flex; align-items: center; justify-content: center; font-weight: bold;
     }
     .btn-subscribe {
@@ -151,7 +178,7 @@
     }
     .btn-subscribe.subscribed { background-color: #333; color: #aaa; }
 
-    /* Tombol Interaksi Kanan (Like, Dislike, Comment, Share) */
+    /* Tombol Samping (Like dari 0, Komen, Share) */
     .actions-bar {
       margin-left: 20px;
       display: flex;
@@ -164,15 +191,15 @@
       display: flex; justify-content: center; align-items: center; color: white;
       cursor: pointer; transition: 0.2s; border: none;
     }
-    .action-btn:hover { background: #3f3f3f; transform: scale(1.1); }
+    .action-btn:hover { background: #3f3f3f; }
     .action-btn.active svg { fill: #ff0000; }
-    .action-btn svg { width: 22px; height: 22px; fill: #ffffff; transition: 0.2s; }
-    .action-label { font-size: 12px; margin-top: 2px; text-align: center; }
+    .action-btn svg { width: 22px; height: 22px; fill: #ffffff; }
+    .action-label { font-size: 12px; margin-top: 2px; }
 
-    /* ================= 3. PANEL KOMENTAR AKTIF ================= */
+    /* Drawer Komentar */
     .comment-drawer {
       display: none; position: fixed; right: 0; bottom: 0;
-      width: 380px; height: calc(100vh - 56px); background: #181818;
+      width: 360px; height: calc(100vh - 56px); background: #181818;
       border-left: 1px solid #303030; z-index: 90;
       flex-direction: column; box-shadow: -4px 0 20px rgba(0,0,0,0.5);
     }
@@ -181,9 +208,9 @@
       display: flex; justify-content: space-between; align-items: center; font-weight: bold;
     }
     .comment-list {
-      flex: 1; padding: 16px; overflow-y: auto; display: flex; flex-direction: column; gap: 12px;
+      flex: 1; padding: 16px; overflow-y: auto; display: flex; flex-direction: column; gap: 10px;
     }
-    .comment-item { font-size: 13px; line-height: 1.4; background: #222; padding: 10px; border-radius: 8px; }
+    .comment-item { font-size: 13px; background: #222; padding: 10px; border-radius: 8px; }
     .comment-input-area {
       padding: 12px; border-top: 1px solid #303030; display: flex; gap: 8px;
     }
@@ -195,7 +222,7 @@
       background: #ff0000; color: white; border: none; padding: 8px 14px; border-radius: 20px; cursor: pointer; font-weight: bold;
     }
 
-    /* Popups Modal */
+    /* Modal */
     .modal {
       display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%;
       background: rgba(0,0,0,0.8); justify-content: center; align-items: center; z-index: 200;
@@ -216,18 +243,11 @@
 
   <!-- NAVBAR -->
   <header>
-    <div class="header-left">
-      <div class="brand-logo">
-        <span class="brand-icon">
-          <!-- Vektor Play Icon -->
-          <svg width="14" height="14" viewBox="0 0 24 24" fill="white"><path d="M8 5v14l11-7z"/></svg>
-        </span>
-        ShortVideo
-      </div>
-    </div>
-    <div class="header-center">
-      <input type="text" class="search-box" placeholder="Telusuri ShortVideo...">
-      <button class="search-btn">🔍</button>
+    <div class="brand-logo" onclick="bukaHalaman('main')">
+      <span class="brand-icon">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="white"><path d="M8 5v14l11-7z"/></svg>
+      </span>
+      ShortVideo
     </div>
     <div class="header-right">
       <button class="btn-create" onclick="bukaModal('add-modal')">＋ Tambah</button>
@@ -239,119 +259,53 @@
   <!-- LAYOUT UTAMA -->
   <div class="main-layout">
     
-    <!-- Sidebar: Hanya Home (Ikon Vektor Buatan Sendiri) -->
+    <!-- SIDEBAR KIRI: HANYA ICON MAIN & SHORTS (VEKTOR SVG) -->
     <div class="sidebar">
-      <div class="side-item">
+      <!-- Icon Main -->
+      <div class="side-item active" id="side-main" onclick="bukaHalaman('main')">
         <svg class="side-icon-svg" viewBox="0 0 24 24">
           <path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z"/>
         </svg>
-        Home
+        Main
+      </div>
+      <!-- Icon Shorts -->
+      <div class="side-item" id="side-shorts" onclick="bukaHalaman('shorts')">
+        <svg class="side-icon-svg" viewBox="0 0 24 24">
+          <path d="M17 10.5V7c0-.55-.45-1-1-1H4c-.55 0-1 .45-1 1v10c0 .55.45 1 1 1h12c.55 0 1-.45 1-1v-3.5l4 4v-11l-4 4z"/>
+        </svg>
+        Shorts
       </div>
     </div>
 
-    <!-- Feed Shorts Vertikal -->
-    <div class="shorts-feed-wrapper" id="feed-wrapper">
-      
-      <!-- Short 1 -->
-      <div class="short-container">
-        <div class="video-frame">
-          <iframe 
-            src="https://www.youtube-nocookie.com/embed/jNQXAC9IVRw?autoplay=1&mute=1&playsinline=1" 
-            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" 
-            allowfullscreen>
-          </iframe>
-          <div class="channel-overlay">
-            <div class="channel-header">
-              <div class="channel-pic">J</div>
-              <span class="channel-name">@jawed</span>
-              <button class="btn-subscribe" onclick="toggleSub(this)">Subscribe</button>
-            </div>
-            <div class="video-title">Me at the zoo 🐘 #ShortVideo</div>
-          </div>
-        </div>
-        
-        <!-- Bar Tombol Interaksi Berfungsi -->
-        <div class="actions-bar">
-          <!-- Like -->
-          <button class="action-btn" onclick="toggleLike(this)">
-            <svg viewBox="0 0 24 24"><path d="M1 21h4V9H1v12zm22-11c0-1.1-.9-2-2-2h-6.31l.95-4.57.03-.32c0-.41-.17-.79-.44-1.06L14.17 1 7.59 7.59C7.22 7.95 7 8.45 7 9v10c0 1.1.9 2 2 2h9c.83 0 1.54-.5 1.84-1.22l3.02-7.05c.09-.23.14-.47.14-.73v-2z"/></svg>
-          </button>
-          <span class="action-label" id="like-count-1">3.2 jt</span>
-
-          <!-- Dislike -->
-          <button class="action-btn" onclick="toggleDislike(this)">
-            <svg viewBox="0 0 24 24"><path d="M15 3H6c-.83 0-1.54.5-1.84 1.22l-3.02 7.05c-.09.23-.14.47-.14.73v2c0 1.1.9 2 2 2h6.31l-.95 4.57-.03.32c0 .41.17.79.44 1.06L9.83 23l6.59-6.59c.37-.36.58-.86.58-1.41V5c0-1.1-.9-2-2-2zm4 0v12h4V3h-4z"/></svg>
-          </button>
-          <span class="action-label">Tidak suka</span>
-
-          <!-- Comment -->
-          <button class="action-btn" onclick="bukaKomentar()">
-            <svg viewBox="0 0 24 24"><path d="M21.99 4c0-1.1-.89-2-1.99-2H4c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h14l4 4-.01-18z"/></svg>
-          </button>
-          <span class="action-label">Komentar</span>
-
-          <!-- Share -->
-          <button class="action-btn" onclick="bagikanLink()">
-            <svg viewBox="0 0 24 24"><path d="M14 9V5l7 7-7 7v-4.1c-5 0-8.5 1.6-11 5.1 1-5 4-10 11-11z"/></svg>
-          </button>
-          <span class="action-label">Bagikan</span>
-        </div>
+    <!-- 1. HALAMAN MAIN -->
+    <div id="page-main">
+      <div class="main-title">Nonton Short apa?</div>
+      <div class="main-buttons-group">
+        <button class="btn-main-action btn-main-play" onclick="bukaHalaman('shorts')">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="white"><path d="M8 5v14l11-7z"/></svg>
+          Nonton Shorts
+        </button>
+        <button class="btn-main-action btn-main-add" onclick="bukaModal('add-modal')">
+          ＋ Tambahkan Short
+        </button>
       </div>
-
-      <!-- Short 2 -->
-      <div class="short-container">
-        <div class="video-frame">
-          <iframe 
-            src="https://www.youtube-nocookie.com/embed/dQw4w9WgXcQ?autoplay=1&mute=1&playsinline=1" 
-            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" 
-            allowfullscreen>
-          </iframe>
-          <div class="channel-overlay">
-            <div class="channel-header">
-              <div class="channel-pic" style="background:#4caf50;">R</div>
-              <span class="channel-name">@RickMusic</span>
-              <button class="btn-subscribe" onclick="toggleSub(this)">Subscribe</button>
-            </div>
-            <div class="video-title">Never Gonna Give You Up! 🕺🎶</div>
-          </div>
-        </div>
-        
-        <div class="actions-bar">
-          <button class="action-btn" onclick="toggleLike(this)">
-            <svg viewBox="0 0 24 24"><path d="M1 21h4V9H1v12zm22-11c0-1.1-.9-2-2-2h-6.31l.95-4.57.03-.32c0-.41-.17-.79-.44-1.06L14.17 1 7.59 7.59C7.22 7.95 7 8.45 7 9v10c0 1.1.9 2 2 2h9c.83 0 1.54-.5 1.84-1.22l3.02-7.05c.09-.23.14-.47.14-.73v-2z"/></svg>
-          </button>
-          <span class="action-label">18 jt</span>
-
-          <button class="action-btn" onclick="toggleDislike(this)">
-            <svg viewBox="0 0 24 24"><path d="M15 3H6c-.83 0-1.54.5-1.84 1.22l-3.02 7.05c-.09.23-.14.47-.14.73v2c0 1.1.9 2 2 2h6.31l-.95 4.57-.03.32c0 .41.17.79.44 1.06L9.83 23l6.59-6.59c.37-.36.58-.86.58-1.41V5c0-1.1-.9-2-2-2zm4 0v12h4V3h-4z"/></svg>
-          </button>
-          <span class="action-label">Tidak suka</span>
-
-          <button class="action-btn" onclick="bukaKomentar()">
-            <svg viewBox="0 0 24 24"><path d="M21.99 4c0-1.1-.89-2-1.99-2H4c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h14l4 4-.01-18z"/></svg>
-          </button>
-          <span class="action-label">Komentar</span>
-
-          <button class="action-btn" onclick="bagikanLink()">
-            <svg viewBox="0 0 24 24"><path d="M14 9V5l7 7-7 7v-4.1c-5 0-8.5 1.6-11 5.1 1-5 4-10 11-11z"/></svg>
-          </button>
-          <span class="action-label">Bagikan</span>
-        </div>
-      </div>
-
+      <p id="empty-info" style="color: #777; margin-top: 25px; font-size: 14px;">Belum ada video tersimpan. Klik "Tambahkan Short" untuk memulai!</p>
     </div>
+
+    <!-- 2. HALAMAN SHORTS -->
+    <div id="page-shorts">
+      <!-- Video akan otomatis masuk ke sini lewat JavaScript -->
+    </div>
+
   </div>
 
-  <!-- 3. PANEL KOMENTAR AKTIF -->
+  <!-- PANEL KOMENTAR -->
   <div class="comment-drawer" id="comment-drawer">
     <div class="comment-header">
-      <span>Komentar</span>
+      <span id="comment-title">Komentar</span>
       <button style="background:none; border:none; color:#aaa; font-size:18px; cursor:pointer;" onclick="tutupKomentar()">✕</button>
     </div>
-    <div class="comment-list" id="comment-list">
-      <div class="comment-item"><strong>@budi_99:</strong> Keren banget videonya! 🔥</div>
-      <div class="comment-item"><strong>@siti_gaming:</strong> Suka banget soundnya 😍</div>
-    </div>
+    <div class="comment-list" id="comment-list"></div>
     <div class="comment-input-area">
       <input type="text" id="input-komentar" placeholder="Tulis komentar kamu...">
       <button onclick="kirimKomentar()">Kirim</button>
@@ -368,12 +322,12 @@
     </div>
   </div>
 
-  <!-- POPUP TAMBAH VIDEO -->
+  <!-- POPUP TAMBAH SHORTS -->
   <div class="modal" id="add-modal">
     <div class="modal-box">
-      <h3>Tambah ShortVideo</h3>
-      <input type="text" id="video-id-input" placeholder="Link / ID YouTube Shorts">
-      <input type="text" id="video-channel-input" placeholder="Nama Channel (@NamaKamu)">
+      <h3>Tambahkan Short Baru</h3>
+      <input type="text" id="video-id-input" placeholder="Link YouTube Shorts (youtube.com/shorts/...)">
+      <input type="text" id="video-channel-input" placeholder="Nama Channel (misal: @Kreator)">
       <button class="modal-btn" onclick="tambahVideo()">Tambahkan</button>
       <button style="background:none; border:none; color:#888; cursor:pointer;" onclick="tutupModal('add-modal')">Batal</button>
     </div>
@@ -381,115 +335,207 @@
 
   <!-- JAVASCRIPT LOGIKA LENGKAP -->
   <script>
-    let currentUser = "Tamu";
+    let currentUser = localStorage.getItem('sv_user') || 'Tamu';
+    let videoList = JSON.parse(localStorage.getItem('sv_videos')) || [];
+    let activeVideoIndex = 0;
+
+    // Cek status akun
+    if (localStorage.getItem('sv_user')) {
+      tampilkanUserBadge(currentUser);
+    }
+
+    // Navigasi Layar (Main vs Shorts)
+    function bukaHalaman(halaman) {
+      tutupKomentar();
+      if (halaman === 'main') {
+        document.getElementById('page-main').style.display = 'flex';
+        document.getElementById('page-shorts').style.display = 'none';
+        document.getElementById('side-main').classList.add('active');
+        document.getElementById('side-shorts').classList.remove('active');
+      } else {
+        if (videoList.length === 0) {
+          alert('Belum ada video! Silakan tambahkan video terlebih dahulu.');
+          bukaModal('add-modal');
+          return;
+        }
+        document.getElementById('page-main').style.display = 'none';
+        document.getElementById('page-shorts').style.display = 'block';
+        document.getElementById('side-main').classList.remove('active');
+        document.getElementById('side-shorts').classList.add('active');
+      }
+    }
 
     function bukaModal(id) { document.getElementById(id).style.display = 'flex'; }
     function tutupModal(id) { document.getElementById(id).style.display = 'none'; }
 
-    // Fitur Like Berfungsi
-    function toggleLike(btn) {
-      btn.classList.toggle('active');
-    }
+    // Render Ulang Feed Video
+    function renderVideos() {
+      const feed = document.getElementById('page-shorts');
+      feed.innerHTML = '';
 
-    // Fitur Dislike Berfungsi
-    function toggleDislike(btn) {
-      btn.classList.toggle('active');
-    }
-
-    // Fitur Subscribe Berfungsi
-    function toggleSub(btn) {
-      if (btn.classList.contains('subscribed')) {
-        btn.classList.remove('subscribed');
-        btn.innerText = 'Subscribe';
+      if (videoList.length === 0) {
+        document.getElementById('empty-info').innerText = 'Belum ada video tersimpan. Klik "Tambahkan Short" untuk memulai!';
+        return;
       } else {
-        btn.classList.add('subscribed');
-        btn.innerText = 'Disubscribe ✓';
+        document.getElementById('empty-info').innerText = `Ada ${videoList.length} video tersimpan siap ditonton!`;
       }
-    }
 
-    // Fitur Komentar Nyata
-    function bukaKomentar() {
-      document.getElementById('comment-drawer').style.display = 'flex';
-    }
-    function tutupKomentar() {
-      document.getElementById('comment-drawer').style.display = 'none';
-    }
-    function kirimKomentar() {
-      const input = document.getElementById('input-komentar');
-      const text = input.value.trim();
-      if (!text) return;
+      videoList.forEach((v, index) => {
+        const card = document.createElement('div');
+        card.className = 'short-container';
+        card.innerHTML = `
+          <div class="video-frame">
+            <iframe 
+              src="https://www.youtube-nocookie.com/embed/${v.id}?autoplay=1&mute=1&playsinline=1" 
+              allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" 
+              allowfullscreen>
+            </iframe>
+            <div class="channel-overlay">
+              <div class="channel-header">
+                <div class="channel-pic">${v.channel.charAt(1).toUpperCase()}</div>
+                <span class="channel-name">${v.channel}</span>
+                <button class="btn-subscribe" onclick="toggleSub(this)">Subscribe</button>
+              </div>
+              <div style="font-size:13px;">Shorts pilihan di ShortVideo 🔥</div>
+            </div>
+          </div>
+          <div class="actions-bar">
+            <!-- Like Dimulai dari 0 -->
+            <button class="action-btn ${v.liked ? 'active' : ''}" onclick="toggleLike(${index}, this)">
+              <svg viewBox="0 0 24 24"><path d="M1 21h4V9H1v12zm22-11c0-1.1-.9-2-2-2h-6.31l.95-4.57.03-.32c0-.41-.17-.79-.44-1.06L14.17 1 7.59 7.59C7.22 7.95 7 8.45 7 9v10c0 1.1.9 2 2 2h9c.83 0 1.54-.5 1.84-1.22l3.02-7.05c.09-.23.14-.47.14-.73v-2z"/></svg>
+            </button>
+            <span class="action-label" id="like-text-${index}">${v.likes}</span>
 
-      const list = document.getElementById('comment-list');
-      const item = document.createElement('div');
-      item.className = 'comment-item';
-      item.innerHTML = `<strong>@${currentUser}:</strong> ${text}`;
-      list.appendChild(item);
-      input.value = '';
-      list.scrollTop = list.scrollHeight;
-    }
+            <button class="action-btn" onclick="this.classList.toggle('active')">
+              <svg viewBox="0 0 24 24"><path d="M15 3H6c-.83 0-1.54.5-1.84 1.22l-3.02 7.05c-.09.23-.14.47-.14.73v2c0 1.1.9 2 2 2h6.31l-.95 4.57-.03.32c0 .41.17.79.44 1.06L9.83 23l6.59-6.59c.37-.36.58-.86.58-1.41V5c0-1.1-.9-2-2-2zm4 0v12h4V3h-4z"/></svg>
+            </button>
 
-    // Fitur Share Nyata
-    function bagikanLink() {
-      navigator.clipboard.writeText(window.location.href);
-      alert('Tautan ShortVideo berhasil disalin ke clipboard! 📋');
-    }
+            <!-- Buka Komentar -->
+            <button class="action-btn" onclick="bukaKomentar(${index})">
+              <svg viewBox="0 0 24 24"><path d="M21.99 4c0-1.1-.89-2-1.99-2H4c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h14l4 4-.01-18z"/></svg>
+            </button>
+            <span class="action-label">${v.comments.length}</span>
 
-    // Fitur Buat Akun
-    function buatAkun() {
-      const name = document.getElementById('username-input').value.trim();
-      if (!name) return alert('Masukkan nama kamu!');
-      currentUser = name;
-      document.getElementById('auth-btn').style.display = 'none';
-      const badge = document.getElementById('user-badge');
-      badge.style.display = 'flex';
-      badge.innerText = name.charAt(0).toUpperCase();
-      tutupModal('auth-modal');
-      alert('Akun @' + name + ' berhasil dibuat!');
+            <!-- Bagikan -->
+            <button class="action-btn" onclick="bagikanLink()">
+              <svg viewBox="0 0 24 24"><path d="M14 9V5l7 7-7 7v-4.1c-5 0-8.5 1.6-11 5.1 1-5 4-10 11-11z"/></svg>
+            </button>
+          </div>
+        `;
+        feed.appendChild(card);
+      });
     }
 
     // Fitur Tambah Video
     function tambahVideo() {
       const input = document.getElementById('video-id-input').value.trim();
-      const channel = document.getElementById('video-channel-input').value.trim() || '@Creator';
-      if (!input) return alert('Masukkan link video!');
+      const channel = document.getElementById('video-channel-input').value.trim() || '@Kreator';
+      if (!input) return alert('Silakan masukkan link Shorts!');
 
       let id = input;
       if (input.includes('shorts/')) id = input.split('shorts/')[1].split('?')[0];
       else if (input.includes('watch?v=')) id = input.split('watch?v=')[1].split('&')[0];
       else if (input.includes('youtu.be/')) id = input.split('youtu.be/')[1].split('?')[0];
 
-      const wrapper = document.getElementById('feed-wrapper');
-      const newCard = document.createElement('div');
-      newCard.className = 'short-container';
-      newCard.innerHTML = `
-        <div class="video-frame">
-          <iframe 
-            src="https://www.youtube-nocookie.com/embed/${id}?autoplay=1&mute=1&playsinline=1" 
-            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" 
-            allowfullscreen>
-          </iframe>
-          <div class="channel-overlay">
-            <div class="channel-header">
-              <div class="channel-pic" style="background:#ff9800;">${channel.charAt(1).toUpperCase()}</div>
-              <span class="channel-name">${channel}</span>
-              <button class="btn-subscribe" onclick="toggleSub(this)">Subscribe</button>
-            </div>
-            <div class="video-title">Video baru di ShortVideo! 🔥</div>
-          </div>
-        </div>
-        <div class="actions-bar">
-          <button class="action-btn" onclick="toggleLike(this)"><svg viewBox="0 0 24 24"><path d="M1 21h4V9H1v12zm22-11c0-1.1-.9-2-2-2h-6.31l.95-4.57.03-.32c0-.41-.17-.79-.44-1.06L14.17 1 7.59 7.59C7.22 7.95 7 8.45 7 9v10c0 1.1.9 2 2 2h9c.83 0 1.54-.5 1.84-1.22l3.02-7.05c.09-.23.14-.47.14-.73v-2z"/></svg></button>
-          <span class="action-label">1</span>
-          <button class="action-btn" onclick="toggleDislike(this)"><svg viewBox="0 0 24 24"><path d="M15 3H6c-.83 0-1.54.5-1.84 1.22l-3.02 7.05c-.09.23-.14.47-.14.73v2c0 1.1.9 2 2 2h6.31l-.95 4.57-.03.32c0 .41.17.79.44 1.06L9.83 23l6.59-6.59c.37-.36.58-.86.58-1.41V5c0-1.1-.9-2-2-2zm4 0v12h4V3h-4z"/></svg></button>
-          <button class="action-btn" onclick="bukaKomentar()"><svg viewBox="0 0 24 24"><path d="M21.99 4c0-1.1-.89-2-1.99-2H4c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h14l4 4-.01-18z"/></svg></button>
-          <button class="action-btn" onclick="bagikanLink()"><svg viewBox="0 0 24 24"><path d="M14 9V5l7 7-7 7v-4.1c-5 0-8.5 1.6-11 5.1 1-5 4-10 11-11z"/></svg></button>
-        </div>
-      `;
-      wrapper.appendChild(newCard);
+      videoList.push({
+        id: id,
+        channel: channel,
+        likes: 0,
+        liked: false,
+        comments: []
+      });
+
+      localStorage.setItem('sv_videos', JSON.stringify(videoList));
       document.getElementById('video-id-input').value = '';
       tutupModal('add-modal');
-      newCard.scrollIntoView({ behavior: 'smooth' });
+      renderVideos();
+      bukaHalaman('shorts');
     }
+
+    // Like dari 0 (Toggle 0 ke 1)
+    function toggleLike(index, btn) {
+      if (videoList[index].liked) {
+        videoList[index].likes = 0;
+        videoList[index].liked = false;
+        btn.classList.remove('active');
+      } else {
+        videoList[index].likes = 1;
+        videoList[index].liked = true;
+        btn.classList.add('active');
+      }
+      document.getElementById(`like-text-${index}`).innerText = videoList[index].likes;
+      localStorage.setItem('sv_videos', JSON.stringify(videoList));
+    }
+
+    function toggleSub(btn) {
+      btn.classList.toggle('subscribed');
+      btn.innerText = btn.classList.contains('subscribed') ? 'Disubscribe ✓' : 'Subscribe';
+    }
+
+    // Komentar per Video
+    function bukaKomentar(index) {
+      activeVideoIndex = index;
+      const drawer = document.getElementById('comment-drawer');
+      const list = document.getElementById('comment-list');
+      list.innerHTML = '';
+
+      const v = videoList[index];
+      if (v.comments.length === 0) {
+        list.innerHTML = '<div style="color:#777; font-size:13px; text-align:center; padding:20px;">Belum ada komentar. Jadilah yang pertama!</div>';
+      } else {
+        v.comments.forEach(c => {
+          const item = document.createElement('div');
+          item.className = 'comment-item';
+          item.innerHTML = `<strong>@${c.user}:</strong> ${c.text}`;
+          list.appendChild(item);
+        });
+      }
+
+      drawer.style.display = 'flex';
+    }
+
+    function tutupKomentar() { document.getElementById('comment-drawer').style.display = 'none'; }
+
+    function kirimKomentar() {
+      const input = document.getElementById('input-komentar');
+      const text = input.value.trim();
+      if (!text) return;
+
+      videoList[activeVideoIndex].comments.push({
+        user: currentUser,
+        text: text
+      });
+
+      localStorage.setItem('sv_videos', JSON.stringify(videoList));
+      input.value = '';
+      bukaKomentar(activeVideoIndex);
+      renderVideos();
+    }
+
+    function bagikanLink() {
+      navigator.clipboard.writeText(window.location.href);
+      alert('Tautan ShortVideo disalin ke clipboard! 📋');
+    }
+
+    function buatAkun() {
+      const name = document.getElementById('username-input').value.trim();
+      if (!name) return alert('Masukkan nama kamu!');
+      currentUser = name;
+      localStorage.setItem('sv_user', name);
+      tampilkanUserBadge(name);
+      tutupModal('auth-modal');
+      alert('Akun @' + name + ' berhasil dibuat!');
+    }
+
+    function tampilkanUserBadge(name) {
+      document.getElementById('auth-btn').style.display = 'none';
+      const badge = document.getElementById('user-badge');
+      badge.style.display = 'flex';
+      badge.innerText = name.charAt(0).toUpperCase();
+    }
+
+    // Muat data awal
+    renderVideos();
   </script>
 
 </body>
