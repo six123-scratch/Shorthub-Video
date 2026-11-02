@@ -16,7 +16,7 @@
       overflow: hidden;
     }
 
-    /* 1. NAVBAR */
+    /* ================= 1. HEADER / NAVBAR ATAS ================= */
     header {
       height: 56px;
       display: flex;
@@ -28,66 +28,129 @@
       z-index: 10;
     }
 
-    .header-left { display: flex; align-items: center; gap: 16px; }
-    .menu-icon { font-size: 20px; cursor: pointer; color: #fff; }
-    .yt-logo {
-      display: flex; align-items: center; gap: 4px;
-      font-weight: bold; font-size: 18px; color: #fff;
+    .header-left {
+      display: flex;
+      align-items: center;
+      gap: 16px;
     }
+
+    .menu-icon { font-size: 20px; cursor: pointer; color: #fff; }
+
+    .yt-logo {
+      display: flex;
+      align-items: center;
+      gap: 4px;
+      font-weight: bold;
+      font-size: 18px;
+      letter-spacing: -0.5px;
+      color: #fff;
+    }
+
     .yt-icon {
-      background-color: #ff0000; color: white;
-      padding: 2px 6px; border-radius: 6px; font-size: 12px;
+      background-color: #ff0000;
+      color: white;
+      padding: 2px 6px;
+      border-radius: 6px;
+      font-size: 12px;
     }
 
     .header-center {
-      display: flex; align-items: center; width: 40%; max-width: 500px;
-    }
-    .search-box {
-      width: 100%; padding: 8px 16px; border-radius: 20px 0 0 20px;
-      border: 1px solid #303030; background: #121212; color: white; outline: none;
-    }
-    .search-btn {
-      padding: 8px 18px; border-radius: 0 20px 20px 0;
-      border: 1px solid #303030; border-left: none; background: #222; color: white; cursor: pointer;
+      display: flex;
+      align-items: center;
+      width: 40%;
+      max-width: 500px;
     }
 
-    .header-right { display: flex; align-items: center; gap: 16px; }
+    .search-box {
+      width: 100%;
+      padding: 8px 16px;
+      border-radius: 20px 0 0 20px;
+      border: 1px solid #303030;
+      background: #121212;
+      color: white;
+      outline: none;
+    }
+
+    .search-btn {
+      padding: 8px 18px;
+      border-radius: 0 20px 20px 0;
+      border: 1px solid #303030;
+      border-left: none;
+      background: #222;
+      color: white;
+      cursor: pointer;
+    }
+
+    .header-right {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+    }
+
     .btn-create {
-      background-color: #272727; color: white; border: none;
-      padding: 8px 14px; border-radius: 18px; font-size: 14px;
-      font-weight: 500; cursor: pointer;
+      background-color: #272727;
+      color: white;
+      border: none;
+      padding: 8px 14px;
+      border-radius: 18px;
+      font-size: 14px;
+      font-weight: 500;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      cursor: pointer;
     }
     .btn-create:hover { background-color: #3f3f3f; }
+
     .avatar {
-      width: 32px; height: 32px; border-radius: 50%;
-      background-color: #7b1fa2; display: flex; align-items: center;
-      justify-content: center; font-weight: bold; font-size: 14px;
+      width: 32px;
+      height: 32px;
+      border-radius: 50%;
+      background-color: #7b1fa2;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: bold;
+      font-size: 14px;
     }
 
-    /* 2. LAYOUT */
+    /* ================= 2. LAYOUT UTAMA ================= */
     .main-layout {
       display: flex;
       flex: 1;
       height: calc(100vh - 56px);
     }
 
+    /* Sidebar Kiri Khas YouTube */
     .sidebar {
-      width: 72px; background-color: #0f0f0f; display: flex;
-      flex-direction: column; align-items: center; padding-top: 10px; gap: 24px;
+      width: 72px;
+      background-color: #0f0f0f;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding-top: 10px;
+      gap: 24px;
     }
+
     .side-item {
-      display: flex; flex-direction: column; align-items: center;
-      gap: 6px; font-size: 10px; color: #aaa; cursor: pointer;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 6px;
+      font-size: 10px;
+      color: #aaa;
+      cursor: pointer;
+      text-decoration: none;
     }
+
     .side-item.active { color: #fff; font-weight: bold; }
     .side-item span.icon { font-size: 20px; }
 
-    /* Feed Shorts Vertikal */
+    /* Area Konten Shorts (Snap-Scroll) */
     .shorts-feed-wrapper {
       flex: 1;
       display: flex;
-      flex-direction: column; /* Perbaikan: susun ke bawah */
-      align-items: center;    /* Perbaikan: posisikan di tengah */
+      justify-content: center;
       overflow-y: scroll;
       scroll-snap-type: y mandatory;
       scrollbar-width: none;
@@ -96,23 +159,24 @@
 
     .short-container {
       width: 100%;
-      max-width: 420px;
+      max-width: 400px;
       height: calc(100vh - 56px);
       scroll-snap-align: start;
       display: flex;
       justify-content: center;
       align-items: center;
       position: relative;
-      padding: 16px 0;
+      padding: 10px 0;
     }
 
     .video-frame {
       width: 100%;
       height: 100%;
+      max-height: 720px;
       border-radius: 16px;
       overflow: hidden;
-      background: #111;
-      box-shadow: 0 4px 20px rgba(0,0,0,0.6);
+      background: #000;
+      position: relative;
     }
 
     iframe {
@@ -121,48 +185,80 @@
       border: none;
     }
 
-    /* Tombol Samping */
+    /* Tombol Interaksi Kanan Ala Shorts */
     .actions-bar {
       position: absolute;
-      right: 10px;
+      right: -60px;
       bottom: 40px;
       display: flex;
       flex-direction: column;
       align-items: center;
       gap: 16px;
-      z-index: 5;
     }
-    .action-circle {
-      width: 44px; height: 44px; border-radius: 50%;
-      background: rgba(39, 39, 39, 0.8); display: flex;
-      justify-content: center; align-items: center;
-      color: white; cursor: pointer; font-size: 18px;
-    }
-    .action-label { font-size: 11px; margin-top: 2px; color: #fff; }
 
-    /* 3. POPUP TAMBAH */
+    .action-circle {
+      width: 48px;
+      height: 48px;
+      border-radius: 50%;
+      background: #272727;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      color: white;
+      cursor: pointer;
+      font-size: 18px;
+      transition: 0.2s;
+    }
+    .action-circle:hover { background: #3f3f3f; transform: scale(1.1); }
+    .action-label { font-size: 11px; margin-top: 4px; color: #fff; }
+
+    /* ================= 3. POPUP TAMBAH VIDEO (+ Buat) ================= */
     #add-modal {
-      display: none; position: fixed; top: 0; left: 0;
-      width: 100%; height: 100%; background: rgba(0,0,0,0.8);
-      justify-content: center; align-items: center; z-index: 100;
+      display: none;
+      position: fixed;
+      top: 0; left: 0; width: 100%; height: 100%;
+      background: rgba(0,0,0,0.8);
+      justify-content: center;
+      align-items: center;
+      z-index: 100;
     }
+
     .modal-box {
-      background: #212121; padding: 24px; border-radius: 16px;
-      width: 90%; max-width: 420px; display: flex; flex-direction: column; gap: 16px;
+      background: #212121;
+      padding: 24px;
+      border-radius: 16px;
+      width: 90%;
+      max-width: 420px;
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
     }
+
     .modal-box input {
-      padding: 12px; border-radius: 8px; border: 1px solid #444;
-      background: #121212; color: white; outline: none;
+      padding: 12px;
+      border-radius: 8px;
+      border: 1px solid #444;
+      background: #121212;
+      color: white;
+      outline: none;
     }
+
     .btn-submit {
-      background: #cc0000; color: white; padding: 12px;
-      border: none; border-radius: 8px; font-weight: bold; cursor: pointer;
+      background: #cc0000;
+      color: white;
+      padding: 12px;
+      border: none;
+      border-radius: 8px;
+      font-weight: bold;
+      cursor: pointer;
     }
+    .btn-submit:hover { background: #ff0000; }
   </style>
 </head>
 <body>
 
-  <!-- NAVBAR -->
+  <!-- 1. NAVBAR YOUTUBE -->
   <header>
     <div class="header-left">
       <span class="menu-icon">☰</span>
@@ -173,14 +269,15 @@
       <button class="search-btn">🔍</button>
     </div>
     <div class="header-right">
-      <button class="btn-create" onclick="bukaModal()">＋ Buat</button>
+      <button class="btn-create" onclick="bukaModal()"><span>＋</span> Buat</button>
       <div class="avatar">S</div>
     </div>
   </header>
 
-  <!-- LAYOUT UTAMA -->
+  <!-- 2. LAYOUT UTAMA -->
   <div class="main-layout">
     
+    <!-- Sidebar Kiri -->
     <div class="sidebar">
       <div class="side-item"><span class="icon">🏠</span>Beranda</div>
       <div class="side-item active"><span class="icon">⚡</span>Shorts</div>
@@ -188,14 +285,14 @@
       <div class="side-item"><span class="icon">📁</span>Koleksi</div>
     </div>
 
-    <!-- FEED SHORTS -->
+    <!-- Feed Shorts (Hanya Shorts, Snap Scroll, Autoplay) -->
     <div class="shorts-feed-wrapper" id="feed-wrapper">
       
-      <!-- Video 1 (Pakai domain YouTube Edukasi) -->
+      <!-- Video 1 (Autoplay Aktif Otomatis) -->
       <div class="short-container">
         <div class="video-frame">
           <iframe 
-            src="https://www.youtube-nocookie.com/embed/jNQXAC9IVRw?autoplay=1&mute=1&playsinline=1" 
+            src="https://www.youtube.com/embed/jNQXAC9IVRw?autoplay=1&mute=1&loop=1&playlist=jNQXAC9IVRw&rel=0" 
             allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" 
             allowfullscreen>
           </iframe>
@@ -203,6 +300,7 @@
         <div class="actions-bar">
           <div class="action-circle" onclick="this.style.color='#ff0000'">👍</div>
           <span class="action-label">Suka</span>
+          <div class="action-circle">👎</div>
           <div class="action-circle">💬</div>
           <span class="action-label">2.4 rb</span>
           <div class="action-circle">↗️</div>
@@ -214,7 +312,7 @@
       <div class="short-container">
         <div class="video-frame">
           <iframe 
-            src="https://www.youtube-nocookie.com/embed/dQw4w9WgXcQ?autoplay=1&mute=1&playsinline=1" 
+            src="https://www.youtube.com/embed/dQw4w9WgXcQ?autoplay=1&mute=1&loop=1&playlist=dQw4w9WgXcQ&rel=0" 
             allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" 
             allowfullscreen>
           </iframe>
@@ -222,6 +320,7 @@
         <div class="actions-bar">
           <div class="action-circle" onclick="this.style.color='#ff0000'">👍</div>
           <span class="action-label">Suka</span>
+          <div class="action-circle">👎</div>
           <div class="action-circle">💬</div>
           <span class="action-label">18 rb</span>
           <div class="action-circle">↗️</div>
@@ -232,7 +331,7 @@
     </div>
   </div>
 
-  <!-- POPUP TAMBAH -->
+  <!-- 3. POPUP TAMBAH SHORTS -->
   <div id="add-modal">
     <div class="modal-box">
       <h3>Tambah YouTube Shorts Baru</h3>
@@ -262,7 +361,7 @@
       newCard.innerHTML = `
         <div class="video-frame">
           <iframe 
-            src="https://www.youtube-nocookie.com/embed/${id}?autoplay=1&mute=1&playsinline=1" 
+            src="https://www.youtube.com/embed/${id}?autoplay=1&mute=1&loop=1&playlist=${id}&rel=0" 
             allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" 
             allowfullscreen>
           </iframe>
