@@ -14,9 +14,10 @@
       display: flex;
       flex-direction: column;
       overflow: hidden;
+      user-select: none;
     }
 
-    /* 1. NAVBAR SHORTVIDEO */
+    /* ================= 1. NAVBAR ================= */
     header {
       height: 56px;
       display: flex;
@@ -30,13 +31,14 @@
     }
 
     .header-left { display: flex; align-items: center; gap: 16px; }
+    
     .brand-logo {
-      display: flex; align-items: center; gap: 6px;
-      font-weight: bold; font-size: 19px; color: #fff;
+      display: flex; align-items: center; gap: 8px;
+      font-weight: bold; font-size: 19px; color: #fff; text-decoration: none;
     }
     .brand-icon {
       background-color: #ff0000; color: white;
-      padding: 3px 8px; border-radius: 6px; font-size: 12px;
+      padding: 4px 8px; border-radius: 8px; display: flex; align-items: center;
     }
 
     .header-center { display: flex; align-items: center; width: 40%; max-width: 480px; }
@@ -52,8 +54,10 @@
     .header-right { display: flex; align-items: center; gap: 12px; }
     .btn-create {
       background-color: #272727; color: white; border: none;
-      padding: 8px 14px; border-radius: 18px; font-size: 14px; cursor: pointer;
+      padding: 8px 16px; border-radius: 18px; font-size: 14px; cursor: pointer; font-weight: 500;
     }
+    .btn-create:hover { background-color: #3f3f3f; }
+
     .btn-auth {
       background-color: #ff0000; color: white; border: none;
       padding: 8px 16px; border-radius: 18px; font-size: 14px; cursor: pointer; font-weight: bold;
@@ -63,7 +67,7 @@
       background-color: #00bcd4; color: #000; align-items: center; justify-content: center; font-weight: bold;
     }
 
-    /* 2. LAYOUT UTAMA */
+    /* ================= 2. LAYOUT ================= */
     .main-layout {
       display: flex;
       flex: 1;
@@ -71,40 +75,39 @@
       overflow: hidden;
     }
 
-    /* Sidebar Kiri (Shorts Dihapus, Diganti ShortVideo) */
+    /* Sidebar Bersih Hanya Home (Ikon Vektor Buatan Sendiri) */
     .sidebar {
-      width: 80px;
+      width: 72px;
       background-color: #0f0f0f;
       display: flex;
       flex-direction: column;
       align-items: center;
-      padding-top: 15px;
-      gap: 25px;
+      padding-top: 16px;
       flex-shrink: 0;
       border-right: 1px solid #1a1a1a;
     }
     .side-item {
       display: flex; flex-direction: column; align-items: center;
-      gap: 6px; font-size: 10px; color: #aaa; cursor: pointer;
+      gap: 6px; font-size: 11px; color: #fff; cursor: pointer;
     }
-    .side-item.active { color: #fff; font-weight: bold; }
-    .side-item span { font-size: 22px; }
+    .side-icon-svg {
+      width: 24px; height: 24px; fill: #ffffff;
+    }
 
-    /* Feed Shorts: DIKUNCI VERTIKAL KE BAWAH (BUKAN KE SAMPING) */
+    /* Feed Shorts: Satu Layar Penuh Murni Format Shorts */
     .shorts-feed-wrapper {
       flex: 1;
       height: 100%;
       overflow-y: scroll;
       scroll-snap-type: y mandatory;
       scrollbar-width: none;
-      display: block; /* Memaksa video bertumpuk ke bawah */
+      display: block;
     }
     .shorts-feed-wrapper::-webkit-scrollbar { display: none; }
 
-    /* Wadah 1 Layar Penuh per Video */
     .short-container {
       width: 100%;
-      height: calc(100vh - 56px); /* Pas 1 tinggi layar PC */
+      height: calc(100vh - 56px);
       scroll-snap-align: start;
       scroll-snap-stop: always;
       display: flex;
@@ -113,9 +116,10 @@
       position: relative;
     }
 
-    /* Bingkai Video 9:16 Pas di Tengah */
+    /* Bingkai Format 9:16 Khas Shorts */
     .video-frame {
       height: 88vh;
+      max-height: 720px;
       aspect-ratio: 9 / 16;
       border-radius: 16px;
       overflow: hidden;
@@ -129,11 +133,8 @@
     /* Info Channel & Subscribe */
     .channel-overlay {
       position: absolute;
-      bottom: 20px;
-      left: 15px;
-      right: 15px;
-      color: white;
-      z-index: 5;
+      bottom: 20px; left: 15px; right: 15px;
+      color: white; z-index: 5;
       text-shadow: 1px 1px 4px rgba(0,0,0,0.8);
       pointer-events: none;
     }
@@ -150,7 +151,7 @@
     }
     .btn-subscribe.subscribed { background-color: #333; color: #aaa; }
 
-    /* Tombol Interaksi Kanan */
+    /* Tombol Interaksi Kanan (Like, Dislike, Comment, Share) */
     .actions-bar {
       margin-left: 20px;
       display: flex;
@@ -158,14 +159,43 @@
       align-items: center;
       gap: 16px;
     }
-    .action-circle {
+    .action-btn {
       width: 48px; height: 48px; border-radius: 50%; background: #272727;
-      display: flex; justify-content: center; align-items: center; color: white; cursor: pointer; font-size: 20px;
+      display: flex; justify-content: center; align-items: center; color: white;
+      cursor: pointer; transition: 0.2s; border: none;
     }
-    .action-circle:hover { background: #3f3f3f; }
-    .action-label { font-size: 11px; margin-top: 2px; }
+    .action-btn:hover { background: #3f3f3f; transform: scale(1.1); }
+    .action-btn.active svg { fill: #ff0000; }
+    .action-btn svg { width: 22px; height: 22px; fill: #ffffff; transition: 0.2s; }
+    .action-label { font-size: 12px; margin-top: 2px; text-align: center; }
 
-    /* Modal Popup */
+    /* ================= 3. PANEL KOMENTAR AKTIF ================= */
+    .comment-drawer {
+      display: none; position: fixed; right: 0; bottom: 0;
+      width: 380px; height: calc(100vh - 56px); background: #181818;
+      border-left: 1px solid #303030; z-index: 90;
+      flex-direction: column; box-shadow: -4px 0 20px rgba(0,0,0,0.5);
+    }
+    .comment-header {
+      padding: 16px; border-bottom: 1px solid #303030;
+      display: flex; justify-content: space-between; align-items: center; font-weight: bold;
+    }
+    .comment-list {
+      flex: 1; padding: 16px; overflow-y: auto; display: flex; flex-direction: column; gap: 12px;
+    }
+    .comment-item { font-size: 13px; line-height: 1.4; background: #222; padding: 10px; border-radius: 8px; }
+    .comment-input-area {
+      padding: 12px; border-top: 1px solid #303030; display: flex; gap: 8px;
+    }
+    .comment-input-area input {
+      flex: 1; padding: 8px 12px; border-radius: 20px; border: 1px solid #444;
+      background: #121212; color: white; outline: none;
+    }
+    .comment-input-area button {
+      background: #ff0000; color: white; border: none; padding: 8px 14px; border-radius: 20px; cursor: pointer; font-weight: bold;
+    }
+
+    /* Popups Modal */
     .modal {
       display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%;
       background: rgba(0,0,0,0.8); justify-content: center; align-items: center; z-index: 200;
@@ -187,7 +217,13 @@
   <!-- NAVBAR -->
   <header>
     <div class="header-left">
-      <div class="brand-logo"><span class="brand-icon">▶</span> ShortVideo</div>
+      <div class="brand-logo">
+        <span class="brand-icon">
+          <!-- Vektor Play Icon -->
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="white"><path d="M8 5v14l11-7z"/></svg>
+        </span>
+        ShortVideo
+      </div>
     </div>
     <div class="header-center">
       <input type="text" class="search-box" placeholder="Telusuri ShortVideo...">
@@ -203,17 +239,20 @@
   <!-- LAYOUT UTAMA -->
   <div class="main-layout">
     
-    <!-- Sidebar Kiri -->
+    <!-- Sidebar: Hanya Home (Ikon Vektor Buatan Sendiri) -->
     <div class="sidebar">
-      <div class="side-item active"><span>🏠</span>ShortVideo</div>
-      <div class="side-item"><span>📺</span>Langganan</div>
-      <div class="side-item"><span>📁</span>Koleksi</div>
+      <div class="side-item">
+        <svg class="side-icon-svg" viewBox="0 0 24 24">
+          <path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z"/>
+        </svg>
+        Home
+      </div>
     </div>
 
-    <!-- Feed Shorts Vertikal Ke Bawah -->
+    <!-- Feed Shorts Vertikal -->
     <div class="shorts-feed-wrapper" id="feed-wrapper">
       
-      <!-- Video 1 (Satu Layar Penuh) -->
+      <!-- Short 1 -->
       <div class="short-container">
         <div class="video-frame">
           <iframe 
@@ -230,16 +269,36 @@
             <div class="video-title">Me at the zoo 🐘 #ShortVideo</div>
           </div>
         </div>
+        
+        <!-- Bar Tombol Interaksi Berfungsi -->
         <div class="actions-bar">
-          <div class="action-circle" onclick="this.style.color='#ff0000'">👍</div>
-          <span class="action-label">3.2 jt</span>
-          <div class="action-circle">💬</div>
-          <span class="action-label">15 rb</span>
-          <div class="action-circle">↗️</div>
+          <!-- Like -->
+          <button class="action-btn" onclick="toggleLike(this)">
+            <svg viewBox="0 0 24 24"><path d="M1 21h4V9H1v12zm22-11c0-1.1-.9-2-2-2h-6.31l.95-4.57.03-.32c0-.41-.17-.79-.44-1.06L14.17 1 7.59 7.59C7.22 7.95 7 8.45 7 9v10c0 1.1.9 2 2 2h9c.83 0 1.54-.5 1.84-1.22l3.02-7.05c.09-.23.14-.47.14-.73v-2z"/></svg>
+          </button>
+          <span class="action-label" id="like-count-1">3.2 jt</span>
+
+          <!-- Dislike -->
+          <button class="action-btn" onclick="toggleDislike(this)">
+            <svg viewBox="0 0 24 24"><path d="M15 3H6c-.83 0-1.54.5-1.84 1.22l-3.02 7.05c-.09.23-.14.47-.14.73v2c0 1.1.9 2 2 2h6.31l-.95 4.57-.03.32c0 .41.17.79.44 1.06L9.83 23l6.59-6.59c.37-.36.58-.86.58-1.41V5c0-1.1-.9-2-2-2zm4 0v12h4V3h-4z"/></svg>
+          </button>
+          <span class="action-label">Tidak suka</span>
+
+          <!-- Comment -->
+          <button class="action-btn" onclick="bukaKomentar()">
+            <svg viewBox="0 0 24 24"><path d="M21.99 4c0-1.1-.89-2-1.99-2H4c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h14l4 4-.01-18z"/></svg>
+          </button>
+          <span class="action-label">Komentar</span>
+
+          <!-- Share -->
+          <button class="action-btn" onclick="bagikanLink()">
+            <svg viewBox="0 0 24 24"><path d="M14 9V5l7 7-7 7v-4.1c-5 0-8.5 1.6-11 5.1 1-5 4-10 11-11z"/></svg>
+          </button>
+          <span class="action-label">Bagikan</span>
         </div>
       </div>
 
-      <!-- Video 2 (Ada di Bawahnya, Baru Kelihatan Pas di-Scroll) -->
+      <!-- Short 2 -->
       <div class="short-container">
         <div class="video-frame">
           <iframe 
@@ -256,15 +315,46 @@
             <div class="video-title">Never Gonna Give You Up! 🕺🎶</div>
           </div>
         </div>
+        
         <div class="actions-bar">
-          <div class="action-circle" onclick="this.style.color='#ff0000'">👍</div>
+          <button class="action-btn" onclick="toggleLike(this)">
+            <svg viewBox="0 0 24 24"><path d="M1 21h4V9H1v12zm22-11c0-1.1-.9-2-2-2h-6.31l.95-4.57.03-.32c0-.41-.17-.79-.44-1.06L14.17 1 7.59 7.59C7.22 7.95 7 8.45 7 9v10c0 1.1.9 2 2 2h9c.83 0 1.54-.5 1.84-1.22l3.02-7.05c.09-.23.14-.47.14-.73v-2z"/></svg>
+          </button>
           <span class="action-label">18 jt</span>
-          <div class="action-circle">💬</div>
-          <span class="action-label">420 rb</span>
-          <div class="action-circle">↗️</div>
+
+          <button class="action-btn" onclick="toggleDislike(this)">
+            <svg viewBox="0 0 24 24"><path d="M15 3H6c-.83 0-1.54.5-1.84 1.22l-3.02 7.05c-.09.23-.14.47-.14.73v2c0 1.1.9 2 2 2h6.31l-.95 4.57-.03.32c0 .41.17.79.44 1.06L9.83 23l6.59-6.59c.37-.36.58-.86.58-1.41V5c0-1.1-.9-2-2-2zm4 0v12h4V3h-4z"/></svg>
+          </button>
+          <span class="action-label">Tidak suka</span>
+
+          <button class="action-btn" onclick="bukaKomentar()">
+            <svg viewBox="0 0 24 24"><path d="M21.99 4c0-1.1-.89-2-1.99-2H4c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h14l4 4-.01-18z"/></svg>
+          </button>
+          <span class="action-label">Komentar</span>
+
+          <button class="action-btn" onclick="bagikanLink()">
+            <svg viewBox="0 0 24 24"><path d="M14 9V5l7 7-7 7v-4.1c-5 0-8.5 1.6-11 5.1 1-5 4-10 11-11z"/></svg>
+          </button>
+          <span class="action-label">Bagikan</span>
         </div>
       </div>
 
+    </div>
+  </div>
+
+  <!-- 3. PANEL KOMENTAR AKTIF -->
+  <div class="comment-drawer" id="comment-drawer">
+    <div class="comment-header">
+      <span>Komentar</span>
+      <button style="background:none; border:none; color:#aaa; font-size:18px; cursor:pointer;" onclick="tutupKomentar()">✕</button>
+    </div>
+    <div class="comment-list" id="comment-list">
+      <div class="comment-item"><strong>@budi_99:</strong> Keren banget videonya! 🔥</div>
+      <div class="comment-item"><strong>@siti_gaming:</strong> Suka banget soundnya 😍</div>
+    </div>
+    <div class="comment-input-area">
+      <input type="text" id="input-komentar" placeholder="Tulis komentar kamu...">
+      <button onclick="kirimKomentar()">Kirim</button>
     </div>
   </div>
 
@@ -272,7 +362,7 @@
   <div class="modal" id="auth-modal">
     <div class="modal-box">
       <h3>Buat Akun ShortVideo</h3>
-      <input type="text" id="username-input" placeholder="Masukkan Nama Kamu">
+      <input type="text" id="username-input" placeholder="Masukkan Nama Akun">
       <button class="modal-btn" onclick="buatAkun()">Simpan Akun</button>
       <button style="background:none; border:none; color:#888; cursor:pointer;" onclick="tutupModal('auth-modal')">Batal</button>
     </div>
@@ -282,17 +372,31 @@
   <div class="modal" id="add-modal">
     <div class="modal-box">
       <h3>Tambah ShortVideo</h3>
-      <input type="text" id="video-id-input" placeholder="Link YouTube Shorts">
+      <input type="text" id="video-id-input" placeholder="Link / ID YouTube Shorts">
       <input type="text" id="video-channel-input" placeholder="Nama Channel (@NamaKamu)">
       <button class="modal-btn" onclick="tambahVideo()">Tambahkan</button>
       <button style="background:none; border:none; color:#888; cursor:pointer;" onclick="tutupModal('add-modal')">Batal</button>
     </div>
   </div>
 
+  <!-- JAVASCRIPT LOGIKA LENGKAP -->
   <script>
+    let currentUser = "Tamu";
+
     function bukaModal(id) { document.getElementById(id).style.display = 'flex'; }
     function tutupModal(id) { document.getElementById(id).style.display = 'none'; }
 
+    // Fitur Like Berfungsi
+    function toggleLike(btn) {
+      btn.classList.toggle('active');
+    }
+
+    // Fitur Dislike Berfungsi
+    function toggleDislike(btn) {
+      btn.classList.toggle('active');
+    }
+
+    // Fitur Subscribe Berfungsi
     function toggleSub(btn) {
       if (btn.classList.contains('subscribed')) {
         btn.classList.remove('subscribed');
@@ -303,17 +407,47 @@
       }
     }
 
+    // Fitur Komentar Nyata
+    function bukaKomentar() {
+      document.getElementById('comment-drawer').style.display = 'flex';
+    }
+    function tutupKomentar() {
+      document.getElementById('comment-drawer').style.display = 'none';
+    }
+    function kirimKomentar() {
+      const input = document.getElementById('input-komentar');
+      const text = input.value.trim();
+      if (!text) return;
+
+      const list = document.getElementById('comment-list');
+      const item = document.createElement('div');
+      item.className = 'comment-item';
+      item.innerHTML = `<strong>@${currentUser}:</strong> ${text}`;
+      list.appendChild(item);
+      input.value = '';
+      list.scrollTop = list.scrollHeight;
+    }
+
+    // Fitur Share Nyata
+    function bagikanLink() {
+      navigator.clipboard.writeText(window.location.href);
+      alert('Tautan ShortVideo berhasil disalin ke clipboard! 📋');
+    }
+
+    // Fitur Buat Akun
     function buatAkun() {
       const name = document.getElementById('username-input').value.trim();
       if (!name) return alert('Masukkan nama kamu!');
+      currentUser = name;
       document.getElementById('auth-btn').style.display = 'none';
       const badge = document.getElementById('user-badge');
       badge.style.display = 'flex';
       badge.innerText = name.charAt(0).toUpperCase();
       tutupModal('auth-modal');
-      alert('Selamat datang di ShortVideo, ' + name + '!');
+      alert('Akun @' + name + ' berhasil dibuat!');
     }
 
+    // Fitur Tambah Video
     function tambahVideo() {
       const input = document.getElementById('video-id-input').value.trim();
       const channel = document.getElementById('video-channel-input').value.trim() || '@Creator';
@@ -344,11 +478,11 @@
           </div>
         </div>
         <div class="actions-bar">
-          <div class="action-circle" onclick="this.style.color='#ff0000'">👍</div>
+          <button class="action-btn" onclick="toggleLike(this)"><svg viewBox="0 0 24 24"><path d="M1 21h4V9H1v12zm22-11c0-1.1-.9-2-2-2h-6.31l.95-4.57.03-.32c0-.41-.17-.79-.44-1.06L14.17 1 7.59 7.59C7.22 7.95 7 8.45 7 9v10c0 1.1.9 2 2 2h9c.83 0 1.54-.5 1.84-1.22l3.02-7.05c.09-.23.14-.47.14-.73v-2z"/></svg></button>
           <span class="action-label">1</span>
-          <div class="action-circle">💬</div>
-          <span class="action-label">0</span>
-          <div class="action-circle">↗️</div>
+          <button class="action-btn" onclick="toggleDislike(this)"><svg viewBox="0 0 24 24"><path d="M15 3H6c-.83 0-1.54.5-1.84 1.22l-3.02 7.05c-.09.23-.14.47-.14.73v2c0 1.1.9 2 2 2h6.31l-.95 4.57-.03.32c0 .41.17.79.44 1.06L9.83 23l6.59-6.59c.37-.36.58-.86.58-1.41V5c0-1.1-.9-2-2-2zm4 0v12h4V3h-4z"/></svg></button>
+          <button class="action-btn" onclick="bukaKomentar()"><svg viewBox="0 0 24 24"><path d="M21.99 4c0-1.1-.89-2-1.99-2H4c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h14l4 4-.01-18z"/></svg></button>
+          <button class="action-btn" onclick="bagikanLink()"><svg viewBox="0 0 24 24"><path d="M14 9V5l7 7-7 7v-4.1c-5 0-8.5 1.6-11 5.1 1-5 4-10 11-11z"/></svg></button>
         </div>
       `;
       wrapper.appendChild(newCard);
