@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <title>Klon TikTok / Shorts</title>
+  <style>
+    /* Reset & Layar Penuh */
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      background-color: #000;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      font-family: Arial, sans-serif;
+      overflow: hidden;
+    }
+
+    /* Wadah Utama yang Bisa di-Scroll Vertikal */
+    .shorts-container {
+      width: 100%;
+      max-width: 420px; /* Ukuran pas seperti layar HP */
+      height: 100vh;
+      overflow-y: scroll;
+      scroll-snap-type: y mandatory; /* Efek mengunci video */
+      scrollbar-width: none; /* Hilangkan scrollbar di Firefox */
+      position: relative;
+    }
+
+    .shorts-container::-webkit-scrollbar {
+      display: none; /* Hilangkan scrollbar di Chrome */
+    }
+
+    /* Tiap Halaman Video */
+    .video-card {
+      position: relative;
+      width: 100%;
+      height: 100vh;
+      scroll-snap-align: start; /* Titik kunci scroll */
+      background-color: #111;
+    }
+
+    video {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      cursor: pointer;
+    }
+
+    /* Tombol Interaksi Samping (Love, Komen, Share) */
+    .side-bar {
+      position: absolute;
+      right: 15px;
+      bottom: 80px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 20px;
+      color: white;
+    }
+
+    .action-btn {
+      background: none;
+      border: none;
+      color: white;
+      font-size: 28px;
+      cursor: pointer;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      transition: transform 0.2s;
+    }
+
+    .action-btn:hover {
+      transform: scale(1.2);
+    }
+
+    .action-btn span {
+      font-size: 12px;
+      margin-top: 4px;
+    }
+
+    .liked {
+      color: #ff0050 !important; /* Warna merah khas love */
+    }
+
+    /* Informasi Teks (Username & Caption) */
+    .video-info {
+      position: absolute;
+      bottom: 25px;
+      left: 15px;
+      color: white;
+      max-width: 75%;
+      text-shadow: 1px 1px 4px rgba(0,0,0,0.8);
+    }
+
+    .username {
+      font-weight: bold;
+      font-size: 16px;
+      margin-bottom: 6px;
+    }
+
+    .caption {
+      font-size: 14px;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Container Feed Shorts -->
+  <div class="shorts-container">
+
+    <!-- Video 1 -->
+    <div class="video-card">
+      <video loop playsinline onclick="togglePlay(this)">
+        <source src="https://assets.mixkit.co/videos/preview/mixkit-vertical-video-of-a-skater-skating-at-sunset-41589-large.mp4" type="video/mp4">
+      </video>
+      <div class="side-bar">
+        <button class="action-btn" onclick="toggleLike(this)">🤍<span>12.5K</span></button>
+        <button class="action-btn">💬<span>342</span></button>
+        <button class="action-btn">↗️<span>Bagikan</span></button>
+      </div>
+      <div class="video-info">
+        <div class="username">@skater_pro</div>
+        <div class="caption">Skating sore hari sambil nunggu sunset 🛹🔥 #sunset #skate</div>
+      </div>
+    </div>
+
+    <!-- Video 2 -->
+    <div class="video-card">
+      <video loop playsinline onclick="togglePlay(this)">
+        <source src="https://assets.mixkit.co/videos/preview/mixkit-vertical-of-a-girl-dancing-in-a-party-with-lights-41315-large.mp4" type="video/mp4">
+      </video>
+      <div class="side-bar">
+        <button class="action-btn" onclick="toggleLike(this)">🤍<span>45.1K</span></button>
+        <button class="action-btn">💬<span>890</span></button>
+        <button class="action-btn">↗️<span>Bagikan</span></button>
+      </div>
+      <div class="video-info">
+        <div class="username">@dance_queen</div>
+        <div class="caption">Party vibes malam minggu! Siapa yang hafal koreo ini? 💃✨</div>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- Script Interaksi -->
+  <script>
+    // Fitur Klik Video untuk Play / Pause
+    function togglePlay(videoElement) {
+      if (videoElement.paused) {
+        videoElement.play();
+      } else {
+        videoElement.pause();
+      }
+    }
+
+    // Fitur Tombol Love Berubah Merah
+    function toggleLike(button) {
+      button.classList.toggle('liked');
+      if (button.classList.contains('liked')) {
+        button.innerHTML = '❤️<span>Disukai</span>';
+      } else {
+        button.innerHTML = '🤍<span>Suka</span>';
+      }
+    }
+  </script>
+
+</body>
+</html>
