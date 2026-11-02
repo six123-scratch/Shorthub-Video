@@ -2,24 +2,78 @@
 <html lang="id">
 <head>
   <meta charset="UTF-8">
-  <title>Feed YouTube Shorts</title>
+  <title>Shorthub Video</title>
   <style>
     * { margin: 0; padding: 0; box-sizing: border-box; }
     
     body {
-      background-color: #000;
+      background-color: #0f0f0f;
+      color: #fff;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      height: 100vh;
+      overflow: hidden;
       display: flex;
       justify-content: center;
       align-items: center;
-      height: 100vh;
-      font-family: Arial, sans-serif;
-      overflow: hidden;
     }
 
-    /* Wadah Scroll Vertikal */
+    /* ================= 1. MENU UTAMA ================= */
+    #menu-screen {
+      text-align: center;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 20px;
+    }
+
+    .logo {
+      font-size: 32px;
+      font-weight: bold;
+      color: #ff0000;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .menu-btn {
+      width: 250px;
+      padding: 15px;
+      font-size: 18px;
+      font-weight: bold;
+      border: none;
+      border-radius: 30px;
+      cursor: pointer;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      gap: 10px;
+      transition: 0.2s;
+    }
+
+    .btn-play {
+      background-color: #ff0000;
+      color: white;
+    }
+    .btn-play:hover { background-color: #cc0000; transform: scale(1.05); }
+
+    .btn-add {
+      background-color: #272727;
+      color: white;
+    }
+    .btn-add:hover { background-color: #3f3f3f; transform: scale(1.05); }
+
+    /* ================= 2. FEED SHORTS ================= */
+    #shorts-screen {
+      display: none; /* Disembunyikan awalnya */
+      width: 100%;
+      height: 100vh;
+      position: relative;
+      justify-content: center;
+    }
+
     .shorts-container {
       width: 100%;
-      max-width: 400px; /* Ukuran pas untuk layar vertikal */
+      max-width: 420px;
       height: 100vh;
       overflow-y: scroll;
       scroll-snap-type: y mandatory;
@@ -27,9 +81,7 @@
     }
     .shorts-container::-webkit-scrollbar { display: none; }
 
-    /* Kartu Setiap Video */
     .video-card {
-      position: relative;
       width: 100%;
       height: 100vh;
       scroll-snap-align: start;
@@ -39,40 +91,163 @@
       align-items: center;
     }
 
-    /* Pemutar YouTube agar Pas di Layar */
     iframe {
       width: 100%;
       height: 100%;
       border: none;
-      border-radius: 12px;
+    }
+
+    /* Tombol Kembali ke Menu */
+    .back-btn {
+      position: absolute;
+      top: 20px;
+      left: 20px;
+      background: rgba(0,0,0,0.6);
+      color: white;
+      border: 1px solid #444;
+      padding: 10px 16px;
+      border-radius: 20px;
+      cursor: pointer;
+      z-index: 100;
+      font-weight: bold;
+    }
+    .back-btn:hover { background: #ff0000; }
+
+    /* ================= 3. POPUP TAMBAH VIDEO ================= */
+    #add-modal {
+      display: none;
+      position: fixed;
+      top: 0; left: 0; width: 100%; height: 100%;
+      background: rgba(0,0,0,0.8);
+      justify-content: center;
+      align-items: center;
+      z-index: 200;
+    }
+
+    .modal-box {
+      background: #212121;
+      padding: 30px;
+      border-radius: 15px;
+      width: 90%;
+      max-width: 380px;
+      text-align: center;
+      display: flex;
+      flex-direction: column;
+      gap: 15px;
+    }
+
+    .modal-box input {
+      padding: 12px;
+      border-radius: 8px;
+      border: 1px solid #444;
+      background: #121212;
+      color: white;
+      font-size: 14px;
+    }
+
+    .submit-btn {
+      background: #ff0000;
+      color: white;
+      padding: 12px;
+      border: none;
+      border-radius: 8px;
+      font-weight: bold;
+      cursor: pointer;
+    }
+    .cancel-btn {
+      background: transparent;
+      color: #aaa;
+      border: none;
+      cursor: pointer;
     }
   </style>
 </head>
 <body>
 
-  <div class="shorts-container">
-
-    <!-- Video YouTube Shorts 1 -->
-    <div class="video-card">
-      <iframe 
-        src="https://www.youtube.com/embed/jNQXAC9IVRw?rel=0" 
-        title="YouTube video player" 
-        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" 
-        allowfullscreen>
-      </iframe>
-    </div>
-
-    <!-- Video YouTube Shorts 2 -->
-    <div class="video-card">
-      <iframe 
-        src="https://www.youtube.com/embed/dQw4w9WgXcQ?rel=0" 
-        title="YouTube video player" 
-        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" 
-        allowfullscreen>
-      </iframe>
-    </div>
-
+  <!-- 1. TAMPILAN MENU UTAMA -->
+  <div id="menu-screen">
+    <div class="logo">▶️ Shorthub Video</div>
+    <p style="color: #aaa;">Kumpulan Video Shorts Pilihanmu</p>
+    <br>
+    <button class="menu-btn btn-play" onclick="bukaShorts()">▶️ Tonton Shorts</button>
+    <button class="menu-btn btn-add" onclick="bukaModal()">➕ Tambah Video</button>
   </div>
+
+  <!-- 2. TAMPILAN FEED SHORTS -->
+  <div id="shorts-screen">
+    <button class="back-btn" onclick="kembaliKeMenu()">⬅️ Menu</button>
+    <div class="shorts-container" id="feed-container">
+      <!-- Video Bawaan Awal -->
+      <div class="video-card">
+        <iframe src="https://www.youtube.com/embed/jNQXAC9IVRw?rel=0" allowfullscreen></iframe>
+      </div>
+      <div class="video-card">
+        <iframe src="https://www.youtube.com/embed/dQw4w9WgXcQ?rel=0" allowfullscreen></iframe>
+      </div>
+    </div>
+  </div>
+
+  <!-- 3. POPUP TAMBAH VIDEO -->
+  <div id="add-modal">
+    <div class="modal-box">
+      <h3>Tambah Video Baru</h3>
+      <p style="font-size: 13px; color: #bbb;">Tempel link YouTube Shorts atau ID videonya:</p>
+      <input type="text" id="video-input" placeholder="Contoh: youtube.com/shorts/AbCdEf...">
+      <button class="submit-btn" onclick="simpanVideo()">Tambahkan Sekarang</button>
+      <button class="cancel-btn" onclick="tutupModal()">Batal</button>
+    </div>
+  </div>
+
+  <!-- LOGIKA APLIKASI (JAVASCRIPT) -->
+  <script>
+    function bukaShorts() {
+      document.getElementById('menu-screen').style.display = 'none';
+      document.getElementById('shorts-screen').style.display = 'flex';
+    }
+
+    function kembaliKeMenu() {
+      document.getElementById('shorts-screen').style.display = 'none';
+      document.getElementById('menu-screen').style.display = 'flex';
+    }
+
+    function bukaModal() {
+      document.getElementById('add-modal').style.display = 'flex';
+    }
+
+    function tutupModal() {
+      document.getElementById('add-modal').style.display = 'none';
+    }
+
+    // Fungsi Tambah Video Otomatis
+    function simpanVideo() {
+      const input = document.getElementById('video-input').value.trim();
+      if (!input) return alert('Silakan masukkan link atau ID video!');
+
+      // Mengambil ID dari link YouTube
+      let videoId = input;
+      if (input.includes('shorts/')) {
+        videoId = input.split('shorts/')[1].split('?')[0];
+      } else if (input.includes('watch?v=')) {
+        videoId = input.split('watch?v=')[1].split('&')[0];
+      } else if (input.includes('youtu.be/')) {
+        videoId = input.split('youtu.be/')[1].split('?')[0];
+      }
+
+      // Buat Elemen Video Baru di Feed
+      const container = document.getElementById('feed-container');
+      const newCard = document.createElement('div');
+      newCard.className = 'video-card';
+      newCard.innerHTML = `<iframe src="https://www.youtube.com/embed/${videoId}?rel=0" allowfullscreen></iframe>`;
+      
+      container.appendChild(newCard);
+
+      // Reset & Langsung Buka Shorts
+      document.getElementById('video-input').value = '';
+      tutupModal();
+      bukaShorts();
+      alert('Video berhasil ditambahkan ke feed!');
+    }
+  </script>
 
 </body>
 </html>
