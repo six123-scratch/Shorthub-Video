@@ -186,7 +186,6 @@
     .action-btn svg { width: 20px; height: 20px; fill: #ffffff; }
     .action-label { font-size: 11px; margin-top: 2px; }
 
-    /* RESPONSIF HP */
     @media (max-width: 768px) {
       .sidebar { width: 56px; gap: 12px; }
       .actions-bar {
@@ -390,7 +389,6 @@
     var currentUser = localStorage.getItem('sv_user') || 'Tamu';
     var currentPhotoURL = localStorage.getItem('sv_photo') || '';
     
-    // Murni dari LocalStorage / Kosong jika belum ada
     let localSaved = [];
     try { localSaved = JSON.parse(localStorage.getItem('sv_videos')); } catch (e) {}
     var videoList = Array.isArray(localSaved) ? localSaved : [];
@@ -465,9 +463,12 @@
 
         renderVideos();
         aktifkanSuaraGlobal();
+        
+        // Video pertama langsung diulang dari detik 0 & diputar
         setTimeout(() => {
           const firstIframe = document.querySelector('.short-container iframe');
           if (firstIframe) {
+            svYouTubeCommand(firstIframe, 'seekTo', [0, true]);
             svYouTubeCommand(firstIframe, 'unMute');
             svYouTubeCommand(firstIframe, 'playVideo');
           }
@@ -480,7 +481,6 @@
       iframe.contentWindow.postMessage(JSON.stringify({event:'command', func, args}), '*');
     }
 
-    // Render Feed Video
     function renderVideos() {
       const feed = document.getElementById('page-shorts');
       feed.innerHTML = '';
@@ -576,6 +576,7 @@
       }
     }
 
+    // OBSERVER: Mengulang video dari detik 0 saat scroll ke video baru / scroll balik
     function setupObserver() {
       const cards = document.querySelectorAll('.short-container');
       const observer = new IntersectionObserver(entries => {
@@ -583,9 +584,12 @@
           const iframe = entry.target.querySelector('iframe');
           if (!iframe) return;
           if (entry.isIntersecting) {
+            // Putar ulang dari awal (detik 0)
+            svYouTubeCommand(iframe, 'seekTo', [0, true]);
             svYouTubeCommand(iframe, 'playVideo');
             if (autoSoundActive) svYouTubeCommand(iframe, 'unMute');
           } else {
+            // Berhenti saat dilewati
             svYouTubeCommand(iframe, 'pauseVideo');
           }
         });
@@ -828,7 +832,6 @@
       if (pick && emojis[pick - 1]) document.getElementById('input-komentar').value += emojis[pick - 1];
     }
 
-    // Ekstrak ID YouTube (Mendukung semua format link Shorts & HP)
     function ambilIdYoutube(url) {
       if (!url) return null;
       url = url.trim();
@@ -836,7 +839,6 @@
       return match ? match[1] : (url.length === 11 ? url : null);
     }
 
-    // Tambah Video Baru
     async function simpanShortManual() {
       const input = document.getElementById('video-id-input').value.trim();
       const channel = document.getElementById('video-channel-input').value.trim() || ('@' + currentUser);
@@ -921,7 +923,6 @@
       renderVideos();
     }
 
-    // Inisialisasi Firebase
     async function startFirebase() {
       try {
         firebase.initializeApp(FIREBASE_CONFIG);
