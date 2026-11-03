@@ -210,7 +210,7 @@
       padding: 10px 0;
     }
 
-    /* UKURAN VIDEO PROPORSIONAL */
+    /* UKURAN VIDEO PROPORSIONAL (TIDAK TERLALU TINGGI) */
     .video-frame {
       height: 78vh;
       max-height: 610px;
@@ -497,20 +497,6 @@
     var nextSearchToken = '';
     var isLoadingMore = false;
 
-    // DATABASE CADANGAN (Jika Google Cloud YouTube API belum di-enable, video tetap langsung muncul!)
-    const CADANGAN_ROBLOX = [
-      { id: 'O3cWvhM_Y8g', title: 'Roblox Forsaken Gameplay Highlights', channel: '@RobloxGamers' },
-      { id: 'f87Y-tQ4h_I', title: 'Scary Roblox Forsaken Moments', channel: '@HorrorBlox' },
-      { id: '2Vv-BfVoq4g', title: 'Roblox Pro Moves Shorts', channel: '@ProPlayer' },
-      { id: 'mAKsZ26SabQ', title: 'Roblox Funny Animation', channel: '@BloxToon' }
-    ];
-
-    const CADANGAN_UMUM = [
-      { id: 'nDKx7mM7LYc', title: 'Shorts Viral Trending', channel: '@TrendShorts' },
-      { id: 'kJQP7kiw5Fk', title: 'Top Hits Music Beats', channel: '@MusicVibes' },
-      { id: '3JZ_D3ELwOQ', title: 'Funny Moments Central', channel: '@ComedyCentral' }
-    ];
-
     const FIREBASE_CONFIG = {
       apiKey: "AIzaSyCaXYmvDEmHFSaUd10R4acs2cHT4Ma0mwg",
       authDomain: "shortvideo-8788a.firebaseapp.com",
@@ -597,7 +583,7 @@
       iframe.contentWindow.postMessage(JSON.stringify({event:'command', func, args}), '*');
     }
 
-    /* PENCARIAN & INFINITE SCROLL DENGAN CADANGAN OTOMATIS */
+    /* PENCARIAN & INFINITE SCROLL DENGAN YOUTUBE DATA API V3 */
     async function cariVideoShorts() {
       const input = document.getElementById('global-search-input');
       const query = input.value.trim();
@@ -635,12 +621,26 @@
       }
 
       try {
-        const maxResults = isLoadMore ? 15 : 20;
-        let url = `https://www.googleapis.com/youtube/v3/search?part=snippet&type=video&videoDuration=short&maxResults=${maxResults}&q=${encodeURIComponent(query)}&key=${FIREBASE_CONFIG.apiKey}`;
+        const maxResults = isLoadMore ? 15 : 25;
+        // videoEmbeddable=true memastikan video BISA diputar & tidak pernah "video tak tersedia"
+        let url = `https://www.googleapis.com/youtube/v3/search?part=snippet&type=video&videoDuration=short&videoEmbeddable=true&maxResults=${maxResults}&q=${encodeURIComponent(query)}&key=${FIREBASE_CONFIG.apiKey}`;
         if (nextSearchToken) url += `&pageToken=${nextSearchToken}`;
 
         const res = await fetch(url);
         const data = await res.json();
+
+        if (data.error) {
+          console.error("Google API Error:", data.error);
+          feed.innerHTML = `
+            <div style="display:flex;flex-direction:column;align-items:center;justify-content:center;height:100%;text-align:center;padding:24px;">
+              <div style="font-size:36px;margin-bottom:10px;">⚠️</div>
+              <h3 style="color:#ff4444;margin-bottom:8px;">Izin API Belum Aktif Sepenuhnya</h3>
+              <p style="color:#bbb;font-size:13px;max-width:400px;line-height:1.5;">${svEscape(data.error.message)}</p>
+              <p style="color:#888;font-size:12px;margin-top:14px;">Jika baru saja klik UPDATE di Google Cloud, tunggu 1-2 menit agar server Google selesai sinkronisasi.</p>
+            </div>
+          `;
+          return;
+        }
 
         if (data.items && data.items.length > 0) {
           nextSearchToken = data.nextPageToken || '';
@@ -662,33 +662,15 @@
             videoList = newVideos;
             renderVideos();
           }
-          return;
+        } else if (!isLoadMore) {
+          feed.innerHTML = `<div style="display:flex;flex-direction:column;align-items:center;justify-content:center;height:100%;text-align:center;padding:20px;">
+            <h3>Tidak ada video untuk "${svEscape(query)}"</h3>
+          </div>`;
         }
       } catch (err) {
-        console.warn('YouTube API belum aktif, beralih ke cadangan...', err);
+        console.error('Fetch error:', err);
       } finally {
         isLoadingMore = false;
-      }
-
-      // JIKA API GOOGLE BELUM DIAKTIFKAN: Pakai cadangan pintar agar pencarian TIDAK GAGAL
-      if (!isLoadMore) {
-        let sumberCadangan = CADANGAN_UMUM;
-        if (query.toLowerCase().includes('roblox')) {
-          sumberCadangan = CADANGAN_ROBLOX;
-        }
-
-        videoList = sumberCadangan.map(item => ({
-          ...item,
-          likes: Math.floor(Math.random() * 90) + 20,
-          commentCount: 0,
-          comments: []
-        }));
-
-        renderVideos();
-        // Beri tahu pengguna cara aktifkan API
-        setTimeout(() => {
-          console.info('Tip: Aktifkan YouTube Data API v3 di Google Cloud Console agar jutaan video live dari YouTube langsung masuk.');
-        }, 1000);
       }
     }
 
@@ -782,6 +764,7 @@
       setupObserver();
     }
 
+    // INFINITE SCROLL OTOMATIS
     const feedElement = document.getElementById('page-shorts');
     feedElement.addEventListener('scroll', () => {
       if (nextSearchToken && !isLoadingMore) {
