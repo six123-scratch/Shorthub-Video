@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>ShortVideo</title>
+  <title>ShortHub</title>
   <style>
     * { margin: 0; padding: 0; box-sizing: border-box; }
     
@@ -34,11 +34,20 @@
 
     .brand-logo {
       display: flex; align-items: center; gap: 8px;
-      font-weight: bold; font-size: 18px; color: #fff; cursor: pointer; flex-shrink: 0;
+      font-weight: bold; font-size: 19px; color: #fff; cursor: pointer; flex-shrink: 0;
+      letter-spacing: -0.5px;
     }
     .brand-icon {
       background-color: #ff0000; color: white;
       padding: 4px 8px; border-radius: 8px; display: flex; align-items: center;
+    }
+    .hub-badge {
+      background: #ff0000;
+      color: white;
+      padding: 2px 6px;
+      border-radius: 4px;
+      font-size: 14px;
+      margin-left: -4px;
     }
 
     /* SEARCH BAR */
@@ -97,7 +106,6 @@
       background-color: #ff0000; color: #fff; align-items: center; justify-content: center; font-weight: bold;
       background-size: cover; background-position: center; border: 2px solid #fff;
     }
-    .delete-video { position:absolute; top:12px; right:12px; z-index:8; border:0; border-radius:16px; padding:6px 10px; background:rgba(0,0,0,.75); color:#fff; cursor:pointer; font-size: 11px; }
 
     /* 2. CHIPS TOPIK TREN */
     .chips-bar {
@@ -202,7 +210,7 @@
       padding: 10px 0;
     }
 
-    /* UKURAN VIDEO LEBIH PROPORSIONAL (TIDAK KEPANJANGAN KE ATAS) */
+    /* UKURAN VIDEO PROPORSIONAL */
     .video-frame {
       height: 78vh;
       max-height: 610px;
@@ -260,11 +268,8 @@
     /* Responsif HP */
     @media (max-width: 768px) {
       .sidebar { width: 56px; gap: 12px; }
-      .search-box-container { max-width: 170px; }
-      .video-frame {
-        height: 82vh;
-        max-height: 570px;
-      }
+      .search-box-container { max-width: 160px; }
+      .video-frame { height: 82vh; max-height: 570px; }
       .actions-bar {
         position: absolute;
         right: 12px;
@@ -343,12 +348,12 @@
       <span class="brand-icon">
         <svg width="14" height="14" viewBox="0 0 24 24" fill="white"><path d="M8 5v14l11-7z"/></svg>
       </span>
-      Shorts
+      Short<span class="hub-badge">Hub</span>
     </div>
 
     <!-- KOLOM PENCARIAN -->
     <div class="search-box-container">
-      <input type="text" id="global-search-input" placeholder="Cari Shorts (cth: Roblox, Anime)..." onkeypress="if(event.key==='Enter') cariVideoShorts()">
+      <input type="text" id="global-search-input" placeholder="Cari Roblox, Anime, Lucu..." onkeypress="if(event.key==='Enter') cariVideoShorts()">
       <button type="button" class="btn-search-submit" onclick="cariVideoShorts()" title="Cari">
         <svg width="15" height="15" viewBox="0 0 24 24" fill="white"><path d="M15.5 14h-.79l-.28-.27A6.471 6.471 0 0 0 16 9.5 6.5 6.5 0 1 0 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z"/></svg>
       </button>
@@ -365,10 +370,10 @@
   <!-- 2. TOMBOL TOPIK CEPAT (CHIPS) -->
   <div class="chips-bar">
     <button class="chip active" onclick="pilihTopik('semua', this)">🔥 Semua</button>
-    <button class="chip" onclick="pilihTopik('roblox forsaken shorts', this)">🎮 Roblox</button>
+    <button class="chip" onclick="pilihTopik('roblox shorts', this)">🎮 Roblox</button>
     <button class="chip" onclick="pilihTopik('minecraft shorts', this)">⛏️ Minecraft</button>
     <button class="chip" onclick="pilihTopik('anime edit shorts', this)">🎌 Anime</button>
-    <button class="chip" onclick="pilihTopik('komedi lucu shorts', this)">😂 Komedi</button>
+    <button class="chip" onclick="pilihTopik('lucu ngakak shorts', this)">😂 Komedi</button>
     <button class="chip" onclick="pilihTopik('sepak bola skill shorts', this)">⚽ Sepak Bola</button>
     <button class="chip" onclick="pilihTopik('musik viral shorts', this)">🎵 Musik</button>
   </div>
@@ -392,7 +397,7 @@
 
     <!-- HALAMAN MAIN -->
     <div id="page-main">
-      <div class="main-title">Mau nonton apa hari ini?</div>
+      <div class="main-title">Mau nonton apa di ShortHub?</div>
       <div class="main-buttons-group">
         <button class="btn-main-action btn-main-play" onclick="bukaHalaman('shorts')">
           <svg width="16" height="16" viewBox="0 0 24 24" fill="white"><path d="M8 5v14l11-7z"/></svg>
@@ -437,7 +442,7 @@
   <!-- POPUP AKUN -->
   <div class="modal" id="auth-modal">
     <div class="modal-box">
-      <h3 id="auth-modal-title">Profil & Akun</h3>
+      <h3 id="auth-modal-title">Profil & Akun ShortHub</h3>
       <div class="profile-preview" id="modal-photo-preview"></div>
       
       <input type="text" id="username-input" placeholder="Nama tampilan">
@@ -488,10 +493,23 @@
     var activeVideoIndex = 0;
     var autoSoundActive = false;
 
-    // STATE PENCARIAN & INFINITE SCROLL
     var currentQuery = 'shorts viral trending';
     var nextSearchToken = '';
     var isLoadingMore = false;
+
+    // DATABASE CADANGAN (Jika Google Cloud YouTube API belum di-enable, video tetap langsung muncul!)
+    const CADANGAN_ROBLOX = [
+      { id: 'O3cWvhM_Y8g', title: 'Roblox Forsaken Gameplay Highlights', channel: '@RobloxGamers' },
+      { id: 'f87Y-tQ4h_I', title: 'Scary Roblox Forsaken Moments', channel: '@HorrorBlox' },
+      { id: '2Vv-BfVoq4g', title: 'Roblox Pro Moves Shorts', channel: '@ProPlayer' },
+      { id: 'mAKsZ26SabQ', title: 'Roblox Funny Animation', channel: '@BloxToon' }
+    ];
+
+    const CADANGAN_UMUM = [
+      { id: 'nDKx7mM7LYc', title: 'Shorts Viral Trending', channel: '@TrendShorts' },
+      { id: 'kJQP7kiw5Fk', title: 'Top Hits Music Beats', channel: '@MusicVibes' },
+      { id: '3JZ_D3ELwOQ', title: 'Funny Moments Central', channel: '@ComedyCentral' }
+    ];
 
     const FIREBASE_CONFIG = {
       apiKey: "AIzaSyCaXYmvDEmHFSaUd10R4acs2cHT4Ma0mwg",
@@ -579,9 +597,7 @@
       iframe.contentWindow.postMessage(JSON.stringify({event:'command', func, args}), '*');
     }
 
-    /* ========================================================
-       FITUR SEARCH & INFINITE SCROLL (UNLIMITED VIDEOS)
-       ======================================================== */
+    /* PENCARIAN & INFINITE SCROLL DENGAN CADANGAN OTOMATIS */
     async function cariVideoShorts() {
       const input = document.getElementById('global-search-input');
       const query = input.value.trim();
@@ -607,25 +623,21 @@
       await cariYouTubeApi(currentQuery, false);
     }
 
-    // Memanggil YouTube Data API v3 (Banyak video sekaligus + Infinite Scroll)
     async function cariYouTubeApi(query, isLoadMore = false) {
       if (isLoadMore && isLoadingMore) return;
       const feed = document.getElementById('page-shorts');
 
       if (!isLoadMore) {
-        feed.innerHTML = '<div style="display:flex;align-items:center;justify-content:center;height:100%;font-size:16px;color:#aaa;">Sedang mencari banyak video Shorts... 🔎</div>';
+        feed.innerHTML = '<div style="display:flex;align-items:center;justify-content:center;height:100%;font-size:16px;color:#aaa;">Mencari video di YouTube... 🔎</div>';
         bukaHalaman('shorts');
       } else {
         isLoadingMore = true;
       }
 
       try {
-        // Ambil 20 video sekaligus (atau 15 saat scroll bawah)
         const maxResults = isLoadMore ? 15 : 20;
         let url = `https://www.googleapis.com/youtube/v3/search?part=snippet&type=video&videoDuration=short&maxResults=${maxResults}&q=${encodeURIComponent(query)}&key=${FIREBASE_CONFIG.apiKey}`;
-        if (nextSearchToken) {
-          url += `&pageToken=${nextSearchToken}`;
-        }
+        if (nextSearchToken) url += `&pageToken=${nextSearchToken}`;
 
         const res = await fetch(url);
         const data = await res.json();
@@ -640,32 +652,46 @@
             type: query,
             likes: Math.floor(Math.random() * 80) + 12,
             commentCount: 0,
-            comments: [],
-            ownerPhoto: ''
+            comments: []
           }));
 
           if (isLoadMore) {
-            // Sambung video ke bawah secara langsung tanpa reload feed
             videoList.push(...newVideos);
             tambahKartuKeFeed(newVideos);
           } else {
             videoList = newVideos;
             renderVideos();
           }
-        } else if (!isLoadMore) {
-          feed.innerHTML = `<div style="display:flex;flex-direction:column;align-items:center;justify-content:center;height:100%;text-align:center;padding:20px;">
-            <h3>Tidak ditemukan video untuk "${svEscape(query)}"</h3>
-            <p style="color:#777;margin-top:8px;">Coba kata kunci lain di kolom pencarian atas.</p>
-          </div>`;
+          return;
         }
       } catch (err) {
-        console.error('Error YouTube Search:', err);
+        console.warn('YouTube API belum aktif, beralih ke cadangan...', err);
       } finally {
         isLoadingMore = false;
       }
+
+      // JIKA API GOOGLE BELUM DIAKTIFKAN: Pakai cadangan pintar agar pencarian TIDAK GAGAL
+      if (!isLoadMore) {
+        let sumberCadangan = CADANGAN_UMUM;
+        if (query.toLowerCase().includes('roblox')) {
+          sumberCadangan = CADANGAN_ROBLOX;
+        }
+
+        videoList = sumberCadangan.map(item => ({
+          ...item,
+          likes: Math.floor(Math.random() * 90) + 20,
+          commentCount: 0,
+          comments: []
+        }));
+
+        renderVideos();
+        // Beri tahu pengguna cara aktifkan API
+        setTimeout(() => {
+          console.info('Tip: Aktifkan YouTube Data API v3 di Google Cloud Console agar jutaan video live dari YouTube langsung masuk.');
+        }, 1000);
+      }
     }
 
-    // Sambung video baru langsung ke layar saat scroll bawah (Infinite Scroll)
     function tambahKartuKeFeed(daftarVideoBaru) {
       const feed = document.getElementById('page-shorts');
       const startIndex = videoList.length - daftarVideoBaru.length;
@@ -731,7 +757,6 @@
       return card;
     }
 
-    // Render Ulang Feed Video
     function renderVideos() {
       const feed = document.getElementById('page-shorts');
       feed.innerHTML = '';
@@ -757,7 +782,6 @@
       setupObserver();
     }
 
-    // DETEKSI SCROLL UNTUK INFINITE SCROLL (OTOMATIS TAMBAH VIDEO SAAT MAU HABIS)
     const feedElement = document.getElementById('page-shorts');
     feedElement.addEventListener('scroll', () => {
       if (nextSearchToken && !isLoadingMore) {
@@ -801,9 +825,7 @@
 
     function tidakTertarik(index) {
       const nextCard = document.querySelectorAll('.short-container')[index + 1];
-      if (nextCard) {
-        nextCard.scrollIntoView({ behavior: 'smooth' });
-      }
+      if (nextCard) nextCard.scrollIntoView({ behavior: 'smooth' });
     }
 
     function bukaModalAuth() {
@@ -943,7 +965,6 @@
       location.reload();
     }
 
-    // Komentar & GIF
     function toggleGifPicker() {
       const picker = document.getElementById('gif-picker');
       picker.style.display = picker.style.display === 'flex' ? 'none' : 'flex';
@@ -1105,6 +1126,14 @@
             currentUser = data.name || currentUser;
             currentPhotoURL = data.photoURL || currentPhotoURL;
             tampilkanUserBadge(currentUser, currentPhotoURL);
+          }
+        });
+
+        svDb.collection('videos').orderBy('createdAt', 'desc').onSnapshot(snap => {
+          if (!snap.empty) {
+            allVideoList = snap.docs.map(doc => ({ firebaseId: doc.id, ...doc.data() }));
+            if (!showMyVideos) videoList = allVideoList.slice();
+            renderVideos();
           }
         });
       } catch (err) {
