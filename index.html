@@ -41,12 +41,12 @@
       padding: 4px 8px; border-radius: 8px; display: flex; align-items: center;
     }
 
-    /* KOLOM PENCARIAN (SEARCH BAR) */
+    /* SEARCH BAR */
     .search-box-container {
       display: flex;
       align-items: center;
       flex: 1;
-      max-width: 450px;
+      max-width: 440px;
       background: #121212;
       border: 1px solid #303030;
       border-radius: 24px;
@@ -199,24 +199,26 @@
       justify-content: center;
       align-items: center;
       position: relative;
+      padding: 10px 0;
     }
 
+    /* UKURAN VIDEO LEBIH PROPORSIONAL (TIDAK KEPANJANGAN KE ATAS) */
     .video-frame {
-      height: 90vh;
-      max-height: 720px;
+      height: 78vh;
+      max-height: 610px;
       aspect-ratio: 9 / 16;
-      border-radius: 14px;
+      border-radius: 16px;
       overflow: hidden;
       background: #000;
       position: relative;
-      box-shadow: 0 4px 20px rgba(0,0,0,0.8);
+      box-shadow: 0 4px 22px rgba(0,0,0,0.85);
     }
     iframe { width: 100%; height: 100%; border: none; }
 
     /* Channel Overlay */
     .channel-overlay {
       position: absolute;
-      bottom: 20px; left: 14px; right: 80px;
+      bottom: 18px; left: 14px; right: 75px;
       color: white; z-index: 5;
       text-shadow: 1px 1px 4px rgba(0,0,0,0.8);
       pointer-events: none;
@@ -255,9 +257,14 @@
     .action-btn svg { width: 20px; height: 20px; fill: #ffffff; }
     .action-label { font-size: 11px; margin-top: 2px; }
 
+    /* Responsif HP */
     @media (max-width: 768px) {
       .sidebar { width: 56px; gap: 12px; }
       .search-box-container { max-width: 170px; }
+      .video-frame {
+        height: 82vh;
+        max-height: 570px;
+      }
       .actions-bar {
         position: absolute;
         right: 12px;
@@ -266,12 +273,6 @@
         gap: 10px;
       }
       .action-btn { width: 40px; height: 40px; background: rgba(30,30,30,0.85); }
-      .video-frame {
-        width: 100%;
-        height: 100%;
-        max-height: 100%;
-        border-radius: 0;
-      }
     }
 
     /* Drawer Komentar */
@@ -389,7 +390,7 @@
       </div>
     </div>
 
-    <!-- 1. HALAMAN MAIN -->
+    <!-- HALAMAN MAIN -->
     <div id="page-main">
       <div class="main-title">Mau nonton apa hari ini?</div>
       <div class="main-buttons-group">
@@ -404,7 +405,7 @@
       <p id="empty-info" style="color: #888; margin-top: 25px; font-size: 14px;">Ketik kata kunci di atas atau pilih kategori untuk memulai!</p>
     </div>
 
-    <!-- 2. HALAMAN SHORTS -->
+    <!-- HALAMAN SHORTS -->
     <div id="page-shorts"></div>
   </div>
 
@@ -487,6 +488,11 @@
     var activeVideoIndex = 0;
     var autoSoundActive = false;
 
+    // STATE PENCARIAN & INFINITE SCROLL
+    var currentQuery = 'shorts viral trending';
+    var nextSearchToken = '';
+    var isLoadingMore = false;
+
     const FIREBASE_CONFIG = {
       apiKey: "AIzaSyCaXYmvDEmHFSaUd10R4acs2cHT4Ma0mwg",
       authDomain: "shortvideo-8788a.firebaseapp.com",
@@ -550,9 +556,8 @@
         document.getElementById('side-shorts').classList.add('active');
         document.getElementById('side-my-videos').classList.remove('active');
 
-        // Jika feed kosong saat dibuka, otomatis carikan shorts tren
         if (videoList.length === 0) {
-          cariYouTubeApi('trending shorts viral');
+          cariYouTubeApi(currentQuery, false);
         } else {
           renderVideos();
         }
@@ -575,7 +580,7 @@
     }
 
     /* ========================================================
-       FITUR SEARCH & REKOMENDASI TOPIK YOUTUBE SHORTS
+       FITUR SEARCH & INFINITE SCROLL (UNLIMITED VIDEOS)
        ======================================================== */
     async function cariVideoShorts() {
       const input = document.getElementById('global-search-input');
@@ -583,71 +588,155 @@
       if (!query) return;
 
       document.querySelectorAll('.chip').forEach(c => c.classList.remove('active'));
-      await cariYouTubeApi(query + ' shorts');
+      currentQuery = query + ' shorts';
+      nextSearchToken = '';
+      await cariYouTubeApi(currentQuery, false);
     }
 
     async function pilihTopik(topik, btn) {
       document.querySelectorAll('.chip').forEach(c => c.classList.remove('active'));
       btn.classList.add('active');
       document.getElementById('global-search-input').value = '';
+      nextSearchToken = '';
 
       if (topik === 'semua') {
-        videoList = allVideoList.slice();
-        if (videoList.length === 0) {
-          await cariYouTubeApi('shorts viral trending');
-        } else {
-          renderVideos();
-          bukaHalaman('shorts');
-        }
+        currentQuery = 'shorts viral trending';
       } else {
-        await cariYouTubeApi(topik);
+        currentQuery = topik;
       }
+      await cariYouTubeApi(currentQuery, false);
     }
 
-    // Ambil langsung video dari YouTube API
-    async function cariYouTubeApi(query) {
+    // Memanggil YouTube Data API v3 (Banyak video sekaligus + Infinite Scroll)
+    async function cariYouTubeApi(query, isLoadMore = false) {
+      if (isLoadMore && isLoadingMore) return;
       const feed = document.getElementById('page-shorts');
-      feed.innerHTML = '<div style="display:flex;align-items:center;justify-content:center;height:100%;font-size:16px;color:#aaa;">Sedang mencari video YouTube... 🔎</div>';
-      bukaHalaman('shorts');
+
+      if (!isLoadMore) {
+        feed.innerHTML = '<div style="display:flex;align-items:center;justify-content:center;height:100%;font-size:16px;color:#aaa;">Sedang mencari banyak video Shorts... 🔎</div>';
+        bukaHalaman('shorts');
+      } else {
+        isLoadingMore = true;
+      }
 
       try {
-        const url = `https://www.googleapis.com/youtube/v3/search?part=snippet&type=video&videoDuration=short&maxResults=8&q=${encodeURIComponent(query)}&key=${FIREBASE_CONFIG.apiKey}`;
+        // Ambil 20 video sekaligus (atau 15 saat scroll bawah)
+        const maxResults = isLoadMore ? 15 : 20;
+        let url = `https://www.googleapis.com/youtube/v3/search?part=snippet&type=video&videoDuration=short&maxResults=${maxResults}&q=${encodeURIComponent(query)}&key=${FIREBASE_CONFIG.apiKey}`;
+        if (nextSearchToken) {
+          url += `&pageToken=${nextSearchToken}`;
+        }
+
         const res = await fetch(url);
         const data = await res.json();
 
         if (data.items && data.items.length > 0) {
-          videoList = data.items.map(item => ({
+          nextSearchToken = data.nextPageToken || '';
+          
+          const newVideos = data.items.map(item => ({
             id: item.id.videoId,
             title: item.snippet.title,
             channel: '@' + item.snippet.channelTitle,
             type: query,
-            likes: Math.floor(Math.random() * 80) + 10,
+            likes: Math.floor(Math.random() * 80) + 12,
             commentCount: 0,
             comments: [],
             ownerPhoto: ''
           }));
-          renderVideos();
-        } else {
+
+          if (isLoadMore) {
+            // Sambung video ke bawah secara langsung tanpa reload feed
+            videoList.push(...newVideos);
+            tambahKartuKeFeed(newVideos);
+          } else {
+            videoList = newVideos;
+            renderVideos();
+          }
+        } else if (!isLoadMore) {
           feed.innerHTML = `<div style="display:flex;flex-direction:column;align-items:center;justify-content:center;height:100%;text-align:center;padding:20px;">
             <h3>Tidak ditemukan video untuk "${svEscape(query)}"</h3>
-            <p style="color:#777;margin-top:8px;">Coba kata kunci lain atau periksa YouTube Data API di Google Cloud kamu.</p>
+            <p style="color:#777;margin-top:8px;">Coba kata kunci lain di kolom pencarian atas.</p>
           </div>`;
         }
       } catch (err) {
         console.error('Error YouTube Search:', err);
-        feed.innerHTML = `<div style="text-align:center;padding:40px;color:#aaa;">
-          Gagal memuat video dari YouTube. Pastikan "YouTube Data API v3" sudah di-Enable di Google Cloud Console kamu.
-        </div>`;
+      } finally {
+        isLoadingMore = false;
       }
     }
 
-    // Render Feed Video
+    // Sambung video baru langsung ke layar saat scroll bawah (Infinite Scroll)
+    function tambahKartuKeFeed(daftarVideoBaru) {
+      const feed = document.getElementById('page-shorts');
+      const startIndex = videoList.length - daftarVideoBaru.length;
+
+      daftarVideoBaru.forEach((v, i) => {
+        const index = startIndex + i;
+        const card = buatElemenKartu(v, index);
+        feed.appendChild(card);
+      });
+
+      setupObserver();
+    }
+
+    function buatElemenKartu(v, index) {
+      const card = document.createElement('div');
+      card.className = 'short-container';
+      card.dataset.index = index;
+
+      const creatorPicInitial = svEscape((v.channel || '@Kreator').replace('@','').charAt(0).toUpperCase());
+
+      card.innerHTML = `
+        <div class="video-frame">
+          <iframe 
+            src="https://www.youtube.com/embed/${v.id}?enablejsapi=1&autoplay=1&mute=1&playsinline=1&controls=0&loop=1&playlist=${v.id}&rel=0" 
+            allow="autoplay; accelerometer; encrypted-media; gyroscope; picture-in-picture" 
+            allowfullscreen>
+          </iframe>
+
+          <div class="channel-overlay">
+            <div class="channel-header">
+              <div class="channel-pic">${creatorPicInitial}</div>
+              <span class="channel-name">${svEscape(v.channel)}</span>
+              <button class="btn-subscribe" onclick="toggleSub(this)">Subscribe</button>
+            </div>
+            <div style="font-size:13px;">${svEscape(v.title || 'Shorts')}</div>
+          </div>
+        </div>
+
+        <div class="actions-bar">
+          <button class="action-btn btn-audio" onclick="toggleMuteVideo(this)" title="Suara">
+            <svg viewBox="0 0 24 24"><path d="M3 9v6h4l5 5V4L7 9H3zm13.5 3c0-1.77-1.02-3.29-2.5-4.03v8.05c1.48-.73 2.5-2.25 2.5-4.02zM14 3.23v2.06c2.89.86 5 3.54 5 6.71s-2.11 5.85-5 6.71v2.06c4.01-.91 7-4.49 7-8.77s-2.99-7.86-7-8.77z"/></svg>
+          </button>
+
+          <button class="action-btn ${v.liked ? 'active' : ''}" onclick="toggleLike(${index}, this)">
+            <svg viewBox="0 0 24 24"><path d="M1 21h4V9H1v12zm22-11c0-1.1-.9-2-2-2h-6.31l.95-4.57.03-.32c0-.41-.17-.79-.44-1.06L14.17 1 7.59 7.59C7.22 7.95 7 8.45 7 9v10c0 1.1.9 2 2 2h9c.83 0 1.54-.5 1.84-1.22l3.02-7.05c.09-.23.14-.47.14-.73v-2z"/></svg>
+          </button>
+          <span class="action-label" id="like-text-${index}">${v.likes || 0}</span>
+
+          <button class="action-btn" onclick="tidakTertarik(${index})" title="Tidak Tertarik (Lewati)">
+            <svg viewBox="0 0 24 24"><path d="M15 3H6c-.83 0-1.54.5-1.84 1.22l-3.02 7.05c-.09.23-.14.47-.14.73v2c0 1.1.9 2 2 2h6.31l-.95 4.57-.03.32c0 .41.17.79.44 1.06L9.83 23l6.59-6.59c.37-.36.58-.86.58-1.41V5c0-1.1-.9-2-2-2zm4 0v12h4V3h-4z"/></svg>
+          </button>
+
+          <button class="action-btn" onclick="bukaKomentar(${index})">
+            <svg viewBox="0 0 24 24"><path d="M21.99 4c0-1.1-.89-2-1.99-2H4c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h14l4 4-.01-18z"/></svg>
+          </button>
+          <span class="action-label" id="comment-count-${index}">${v.commentCount || 0}</span>
+
+          <button class="action-btn" onclick="bagikanLink()">
+            <svg viewBox="0 0 24 24"><path d="M14 9V5l7 7-7 7v-4.1c-5 0-8.5 1.6-11 5.1 1-5 4-10 11-11z"/></svg>
+          </button>
+        </div>
+      `;
+      return card;
+    }
+
+    // Render Ulang Feed Video
     function renderVideos() {
       const feed = document.getElementById('page-shorts');
       feed.innerHTML = '';
 
       if (videoList.length === 0) {
-        document.getElementById('empty-info').innerText = 'Belum ada video tersimpan. Ketik di kolom search untuk memuat video!';
         feed.innerHTML = `
           <div style="display:flex; flex-direction:column; align-items:center; justify-content:center; height:100%; text-align:center; padding:20px;">
             <div style="font-size:42px; margin-bottom:10px;">📹</div>
@@ -662,67 +751,21 @@
       document.getElementById('empty-info').innerText = `Ada ${videoList.length} video siap ditonton!`;
 
       videoList.forEach((v, index) => {
-        const card = document.createElement('div');
-        card.className = 'short-container';
-        card.dataset.index = index;
-
-        const creatorPicStyle = v.ownerPhoto ? `background-image: url('${v.ownerPhoto}');` : '';
-        const creatorPicInitial = v.ownerPhoto ? '' : svEscape((v.channel || '@Kreator').replace('@','').charAt(0).toUpperCase());
-
-        card.innerHTML = `
-          <div class="video-frame">
-            ${v.ownerId && svAuth && svAuth.currentUser && v.ownerId === svAuth.currentUser.uid ? `<button class="delete-video" onclick="hapusVideo(${index}); event.stopPropagation();">Hapus</button>` : ''}
-            
-            <iframe 
-              src="https://www.youtube.com/embed/${v.id}?enablejsapi=1&autoplay=1&mute=1&playsinline=1&controls=0&loop=1&playlist=${v.id}&rel=0" 
-              allow="autoplay; accelerometer; encrypted-media; gyroscope; picture-in-picture" 
-              allowfullscreen>
-            </iframe>
-
-            <div class="channel-overlay">
-              <div class="channel-header">
-                <div class="channel-pic" style="${creatorPicStyle}">${creatorPicInitial}</div>
-                <span class="channel-name">${svEscape(v.channel)}</span>
-                <button class="btn-subscribe" onclick="toggleSub(this)">Subscribe</button>
-              </div>
-              <div style="font-size:13px;">${svEscape(v.title || 'Shorts')}</div>
-            </div>
-          </div>
-
-          <div class="actions-bar">
-            <!-- Audio -->
-            <button class="action-btn btn-audio" onclick="toggleMuteVideo(this)" title="Suara">
-              <svg viewBox="0 0 24 24"><path d="M3 9v6h4l5 5V4L7 9H3zm13.5 3c0-1.77-1.02-3.29-2.5-4.03v8.05c1.48-.73 2.5-2.25 2.5-4.02zM14 3.23v2.06c2.89.86 5 3.54 5 6.71s-2.11 5.85-5 6.71v2.06c4.01-.91 7-4.49 7-8.77s-2.99-7.86-7-8.77z"/></svg>
-            </button>
-
-            <!-- Like -->
-            <button class="action-btn ${v.liked ? 'active' : ''}" onclick="toggleLike(${index}, this)">
-              <svg viewBox="0 0 24 24"><path d="M1 21h4V9H1v12zm22-11c0-1.1-.9-2-2-2h-6.31l.95-4.57.03-.32c0-.41-.17-.79-.44-1.06L14.17 1 7.59 7.59C7.22 7.95 7 8.45 7 9v10c0 1.1.9 2 2 2h9c.83 0 1.54-.5 1.84-1.22l3.02-7.05c.09-.23.14-.47.14-.73v-2z"/></svg>
-            </button>
-            <span class="action-label" id="like-text-${index}">${v.likes || 0}</span>
-
-            <!-- Dislike / Tidak Tertarik -->
-            <button class="action-btn" onclick="tidakTertarik(${index})" title="Tidak Tertarik (Lewati)">
-              <svg viewBox="0 0 24 24"><path d="M15 3H6c-.83 0-1.54.5-1.84 1.22l-3.02 7.05c-.09.23-.14.47-.14.73v2c0 1.1.9 2 2 2h6.31l-.95 4.57-.03.32c0 .41.17.79.44 1.06L9.83 23l6.59-6.59c.37-.36.58-.86.58-1.41V5c0-1.1-.9-2-2-2zm4 0v12h4V3h-4z"/></svg>
-            </button>
-
-            <!-- Komentar -->
-            <button class="action-btn" onclick="bukaKomentar(${index})">
-              <svg viewBox="0 0 24 24"><path d="M21.99 4c0-1.1-.89-2-1.99-2H4c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h14l4 4-.01-18z"/></svg>
-            </button>
-            <span class="action-label" id="comment-count-${index}">${v.commentCount || (v.comments ? v.comments.length : 0)}</span>
-
-            <!-- Bagikan -->
-            <button class="action-btn" onclick="bagikanLink()">
-              <svg viewBox="0 0 24 24"><path d="M14 9V5l7 7-7 7v-4.1c-5 0-8.5 1.6-11 5.1 1-5 4-10 11-11z"/></svg>
-            </button>
-          </div>
-        `;
-        feed.appendChild(card);
+        feed.appendChild(buatElemenKartu(v, index));
       });
 
       setupObserver();
     }
+
+    // DETEKSI SCROLL UNTUK INFINITE SCROLL (OTOMATIS TAMBAH VIDEO SAAT MAU HABIS)
+    const feedElement = document.getElementById('page-shorts');
+    feedElement.addEventListener('scroll', () => {
+      if (nextSearchToken && !isLoadingMore) {
+        if (feedElement.scrollTop + feedElement.clientHeight >= feedElement.scrollHeight - 700) {
+          cariYouTubeApi(currentQuery, true);
+        }
+      }
+    });
 
     function toggleMuteVideo(btn) {
       const card = btn.closest('.short-container');
@@ -737,7 +780,6 @@
       }
     }
 
-    // Mengulang video dari detik 0 saat scroll ke video baru atau balik
     function setupObserver() {
       const cards = document.querySelectorAll('.short-container');
       const observer = new IntersectionObserver(entries => {
@@ -757,13 +799,10 @@
       cards.forEach(card => observer.observe(card));
     }
 
-    // Fungsi Tidak Tertarik (Otomatis Skip ke video berikutnya)
     function tidakTertarik(index) {
       const nextCard = document.querySelectorAll('.short-container')[index + 1];
       if (nextCard) {
         nextCard.scrollIntoView({ behavior: 'smooth' });
-      } else {
-        alert('Tidak ada video berikutnya dalam topik ini.');
       }
     }
 
@@ -937,18 +976,6 @@
       v.comments.push(commentObj);
       v.commentCount = v.comments.length;
 
-      if (svFirebaseReady && v.firebaseId) {
-        try {
-          await svDb.collection('videos').doc(v.firebaseId).collection('comments').add({
-            ...commentObj, createdAt: firebase.firestore.FieldValue.serverTimestamp()
-          });
-          await svDb.collection('videos').doc(v.firebaseId).update({
-            commentCount: firebase.firestore.FieldValue.increment(1)
-          });
-        } catch (e) {}
-      }
-
-      localStorage.setItem('sv_videos', JSON.stringify(allVideoList));
       const badge = document.getElementById(`comment-count-${activeVideoIndex}`);
       if (badge) badge.innerText = v.commentCount;
 
@@ -960,14 +987,6 @@
       const v = videoList[index];
       document.getElementById('comment-drawer').style.display = 'flex';
       document.getElementById('gif-picker').style.display = 'none';
-
-      if (svFirebaseReady && v.firebaseId) {
-        document.getElementById('comment-list').innerHTML = '<div style="color:#777;text-align:center;">Memuat...</div>';
-        try {
-          const snap = await svDb.collection('videos').doc(v.firebaseId).collection('comments').orderBy('createdAt', 'asc').get();
-          v.comments = snap.docs.map(doc => doc.data());
-        } catch (e) {}
-      }
       muatDaftarKomentar(v);
     }
 
@@ -982,7 +1001,7 @@
         const item = document.createElement('div');
         item.className = 'comment-item';
         item.innerHTML = `
-          <div class="comment-avatar" style="${c.photoURL ? `background-image:url('${c.photoURL}')` : ''}">${c.photoURL ? '' : (c.user||'U').charAt(0).toUpperCase()}</div>
+          <div class="comment-avatar">${(c.user||'U').charAt(0).toUpperCase()}</div>
           <div class="comment-content">
             <div><strong>@${svEscape(c.user)}</strong></div>
             ${c.text ? `<div>${svEscape(c.text)}</div>` : ''}
@@ -1033,14 +1052,6 @@
         comments: []
       };
 
-      if (svFirebaseReady && svDb) {
-        try {
-          await svDb.collection('videos').add({
-            ...videoData, createdAt: firebase.firestore.FieldValue.serverTimestamp()
-          });
-        } catch (e) {}
-      }
-
       videoList.unshift(videoData);
       allVideoList.unshift(videoData);
       localStorage.setItem('sv_videos', JSON.stringify(allVideoList));
@@ -1057,7 +1068,6 @@
       v.likes = (v.likes || 0) + (v.liked ? 1 : -1);
       btn.classList.toggle('active', v.liked);
       document.getElementById(`like-text-${index}`).innerText = v.likes;
-      localStorage.setItem('sv_videos', JSON.stringify(allVideoList));
     }
 
     function toggleSub(btn) {
@@ -1079,18 +1089,6 @@
       document.getElementById('side-my-videos').classList.add('active');
     }
 
-    async function hapusVideo(index) {
-      if (!confirm('Hapus video ini?')) return;
-      const v = videoList[index];
-      if (svFirebaseReady && v && v.firebaseId) {
-        try { await svDb.collection('videos').doc(v.firebaseId).delete(); } catch(e) {}
-      }
-      videoList.splice(index, 1);
-      allVideoList = allVideoList.filter(item => item.id !== v.id);
-      localStorage.setItem('sv_videos', JSON.stringify(allVideoList));
-      renderVideos();
-    }
-
     async function startFirebase() {
       try {
         firebase.initializeApp(FIREBASE_CONFIG);
@@ -1107,14 +1105,6 @@
             currentUser = data.name || currentUser;
             currentPhotoURL = data.photoURL || currentPhotoURL;
             tampilkanUserBadge(currentUser, currentPhotoURL);
-          }
-        });
-
-        svDb.collection('videos').orderBy('createdAt', 'desc').onSnapshot(snap => {
-          if (!snap.empty) {
-            allVideoList = snap.docs.map(doc => ({ firebaseId: doc.id, ...doc.data() }));
-            if (!showMyVideos) videoList = allVideoList.slice();
-            renderVideos();
           }
         });
       } catch (err) {
